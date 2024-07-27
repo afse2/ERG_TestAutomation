@@ -1,11 +1,3 @@
-const getWorldParams = () => {
-    const params = {
-      foo: 'bar',
-    };
-  
-    return params;
-  };
-
 module.exports = {
     default: {
         tags: process.env.npm_config_TAGS || "",
@@ -20,6 +12,7 @@ module.exports = {
         require: [
             "src/test/steps/*.ts",
             "src/support/hooks/hooks.ts",
+            "src/support/world.ts"
         ],
         requireModule: [
             "ts-node/register"
@@ -41,6 +34,7 @@ module.exports = {
         require: [
             "src/test/steps/*.ts",
             "src/hooks/hooks.ts",
+            "src/support/world.ts"
         ],
         requireModule: [
             "ts-node/register"

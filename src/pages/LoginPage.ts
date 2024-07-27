@@ -16,6 +16,7 @@ export class LoginPage extends BasePage {
     rememberMeCheckBox: Locator;
     passwordRecoveryMail: Locator;
     sendRecoveryLinkButton: Locator;
+    recoveryMessage: Locator;
 
 
 
@@ -32,6 +33,7 @@ export class LoginPage extends BasePage {
         this.rememberMeCheckBox = page.locator("div.n-checkbox-box");
         this.passwordRecoveryMail = page.locator("div.n-dialog--closable input.n-input__input-el");
         this.sendRecoveryLinkButton = page.locator("text=Kurtarma Linkini Gönder");
+        this.recoveryMessage = page.locator("div.n-dialog__action");
     }
 
     async navigateTo(url: string) {

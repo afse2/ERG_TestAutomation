@@ -5,7 +5,7 @@ import { LoginPage } from "../../pages/LoginPage";
 
 
 let loginPage: LoginPage;
-let recoveryMail: string;
+
 
 setDefaultTimeout(60 * 1000 *2);
 Given('User is on the login page', async function () {
@@ -84,6 +84,7 @@ Then('Verify that the password is displayed in bullet sign', async function () {
 
 When('User enter a valid email as {string} into the email input box on password recovery pop-up', async function ( recoveryMail: string) {
      await loginPage.passwordRecoveryMail.fill(recoveryMail);
+     this.recoveryMail = recoveryMail;
      
 })
 
@@ -91,7 +92,8 @@ When('User click on send password recovery mail button', async function () {
     await loginPage.sendRecoveryLinkButton.click();
 })
 
-Then('Verify that the email receive message is displayed on password recovery pop-up', async function () {
+Then('Verify that the email receive message {string} is displayed on password recovery pop-up', async function (recoveryMessage: string) {
+    expect(await loginPage.recoveryMessage.textContent()).toContain(recoveryMessage + " " + this.recoveryMail);
     
 })
 

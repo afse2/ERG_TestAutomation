@@ -46,11 +46,12 @@ Feature: As a user, I should be able to login; so that I can land on homepage
         Given User enter a valid password as "Start123!" into the password input box
         Then Verify that the password is displayed in bullet sign
 
+    @smoke
     Scenario: User should be able to display the email receive message after clicking forgot password link then providing an email
         Given User click on forgot password link
-        When User enter a valid email as "ergtester1@gmail.com" into the email input box on password recovery pop-up
+        When User enter a valid email as "test@test.com" into the email input box on password recovery pop-up
         And User click on send password recovery mail button
-        Then Verify that the email receive message is displayed on password recovery pop-up
+        Then Verify that the email receive message "Parola sıfırlama linki" is displayed on password recovery pop-up
 
     Scenario: User should be able to display own username in the profile menu after succesfull login
         Given User enter a valid email as "ergtester1@gmail.com" into the email input box
