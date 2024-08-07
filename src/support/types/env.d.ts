@@ -1,11 +1,12 @@
 export {}
 declare global {
     namespace NodeJS{
-        interface ProcessEnd{
+        interface ProcessEnv{
             BROWSER: "chromium" | "firefox" | "webkit",
             ENV: "staging" | "prod" | "test",
             BASEURL: string,
-            HEAD: "true" | "false" 
+            HEAD: "true" | "false",
+            TAGS: "@smoke" | "@regression"
         }
     }
 }

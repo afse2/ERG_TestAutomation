@@ -1,4 +1,4 @@
-import { BeforeAll, AfterAll, Before, After, Status } from "@cucumber/cucumber";
+import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from "@cucumber/cucumber";
 import { Browser, BrowserContext } from "@playwright/test";
 import { launchBrowser } from "../browser/launchBrowser";
 import { getEnv } from "../env/env";
@@ -12,6 +12,8 @@ BeforeAll(async function () {
    getEnv();
    browser = await launchBrowser();
 });
+
+setDefaultTimeout(60 * 1000 *2);
 
 // It will trigger for not auth scenarios
 Before(async function ({ pickle }) {
@@ -35,7 +37,7 @@ After(async function ({ pickle, result }) {
     let videoPath: string;
     let img: Buffer;
     const path = `./test-results/trace/${pickle.id}.zip`;
-    if (result?.status == Status.PASSED) {
+    if (result?.status == Status.FAILED) {
         img = await this.page.screenshot(
             { path: `./test-results/screenshots/${pickle.name}.png`, type: "png" })
         videoPath = await this.page.video().path();
@@ -43,7 +45,7 @@ After(async function ({ pickle, result }) {
     await context.tracing.stop({ path: path });
     await this.page.close();
     await context.close();
-    if (result?.status == Status.PASSED) {
+    if (result?.status == Status.FAILED) {
         await this.attach(
             img, "image/png"
         );

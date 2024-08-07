@@ -1,7 +1,8 @@
 import { LaunchOptions, chromium, firefox, webkit } from "@playwright/test";
 
 const options: LaunchOptions = {
-    headless: !true
+    headless: !true,
+    args: ['--window-size=1920,1040']
 }
 export const launchBrowser = () => {
     const browserType = process.env.npm_config_BROWSER || "chrome";

@@ -1,13 +1,14 @@
-import {Given, When , Then, setDefaultTimeout} from "@cucumber/cucumber";
+import {Given, When , Then} from "@cucumber/cucumber";
 import { expect } from "playwright/test";
 import { PageManager } from "../../pages/PageManager";
 import { LoginPage } from "../../pages/LoginPage";
+import { CustomWorld } from "../../support/custom-world";
 
 
 let loginPage: LoginPage;
 
 
-setDefaultTimeout(60 * 1000 *2);
+
 Given('User is on the login page', async function () {
     const pageManager = new PageManager(this.page);
     loginPage = pageManager.getLoginPage();
@@ -17,6 +18,7 @@ Given('User is on the login page', async function () {
 
 When('User enter a valid email as {string} into the email input box', async function (username:string) {
     await loginPage.username.fill(username);
+    this.userName = username;
 });
 
 When('User enter a valid password as {string} into the password input box', async function (password:string) {
@@ -82,7 +84,7 @@ Then('Verify that the password is displayed in bullet sign', async function () {
     expect(await loginPage.password.getAttribute("type")).toEqual("password")
 })
 
-When('User enter a valid email as {string} into the email input box on password recovery pop-up', async function ( recoveryMail: string) {
+When('User enter a valid email as {string} into the email input box on password recovery pop-up', async function (this:CustomWorld, recoveryMail: string) {
      await loginPage.passwordRecoveryMail.fill(recoveryMail);
      this.recoveryMail = recoveryMail;
      
@@ -92,18 +94,19 @@ When('User click on send password recovery mail button', async function () {
     await loginPage.sendRecoveryLinkButton.click();
 })
 
-Then('Verify that the email receive message {string} is displayed on password recovery pop-up', async function (recoveryMessage: string) {
+Then('Verify that the email receive message {string} is displayed on password recovery pop-up', async function (this:CustomWorld, recoveryMessage: string) {
     expect(await loginPage.recoveryMessage.textContent()).toContain(recoveryMessage + " " + this.recoveryMail);
     
 })
 
-Then('Verify that the username is displayed on profile menu who logged in with email', async function () {
-  
+Then('Verify that the username is displayed on profile menu who logged in with email', async function (this:CustomWorld) {
+    expect(await loginPage.userNameOnProfile.textContent()).toEqual(this.userName);
 })
 
-Then('Verify that the captcha code is displayed on Login Page', async function () {
-  
+Then('Verify that the captcha code {string} is displayed on Login Page', async function (captchaCode: string) {
+    expect(await loginPage.captchaCode.getAttribute("placeholder")).toEqual(captchaCode);
 })
+
 
 
 

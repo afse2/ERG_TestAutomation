@@ -9,6 +9,7 @@ export class BasePage {
 
   async navigateTo(url: string) {
     await this.page.goto(url);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async click(selector: string) {
@@ -53,5 +54,9 @@ export class BasePage {
 
   async waitForTimeout(timeout: number) {
     await this.page.waitForTimeout(timeout);
+  }
+
+  async goBack(){
+    await this.page.goBack();
   }
 }

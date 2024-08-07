@@ -1,6 +1,6 @@
 module.exports = {
     default: {
-        tags: process.env.npm_config_TAGS || "",
+        tags: process.env.TAGS || "",
         formatOptions: {
             snippetInterface: "async-await"
         },
@@ -21,6 +21,7 @@ module.exports = {
             "progress-bar",
             "html:test-results/cucumber-report.html",
             "json:test-results/cucumber-report.json",
+            "junit:test-results/cucumber_report.xml",
             "rerun:@rerun.txt"
         ],
         parallel: 1,
@@ -43,6 +44,7 @@ module.exports = {
             "progress-bar",
             "html:test-results/cucumber-report.html",
             "json:test-results/cucumber-report.json",
+            "junit:test-results/cucumber_report.xml",
             "rerun:@rerun.txt"
         ],
         parallel: 2

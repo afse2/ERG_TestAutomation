@@ -17,12 +17,14 @@ export class LoginPage extends BasePage {
     passwordRecoveryMail: Locator;
     sendRecoveryLinkButton: Locator;
     recoveryMessage: Locator;
+    userNameOnProfile: Locator;
+    captchaCode: Locator;
 
 
 
     constructor(page: Page) {
         super(page);
-        this.username = page.locator("[placeholder='Lütfen e-posta adresinizi giriniz']");
+        this.username = page.getByPlaceholder("Lütfen e-posta adresinizi giriniz");
         this.password = page.locator("[type='password']");
         this.signInButton = page.locator("text=Giriş Yap");
         this.brandText = page.locator(".brands-text");
@@ -34,11 +36,15 @@ export class LoginPage extends BasePage {
         this.passwordRecoveryMail = page.locator("div.n-dialog--closable input.n-input__input-el");
         this.sendRecoveryLinkButton = page.locator("text=Kurtarma Linkini Gönder");
         this.recoveryMessage = page.locator("div.n-dialog__action");
+        this.userNameOnProfile = page.locator(".user span");
+        this.captchaCode = page.getByPlaceholder("Captcha code");
     }
 
-    async navigateTo(url: string) {
-        await this.page.goto(url);
-    }
+   async login(userName:string, password:string) {
+    await this.username.fill(userName);
+    await this.password.fill(password);
+    await this.signInButton.click();
+   }
 }
 
 module.exports = { LoginPage };
