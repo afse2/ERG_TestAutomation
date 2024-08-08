@@ -1,6 +1,7 @@
+const path = require("path");
 module.exports = {
     default: {
-        tags: process.env.TAGS || "",
+        tags: process.env.TAGS,
         formatOptions: {
             snippetInterface: "async-await"
         },
