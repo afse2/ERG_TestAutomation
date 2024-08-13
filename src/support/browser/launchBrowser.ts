@@ -1,12 +1,14 @@
 import { LaunchOptions, chromium, firefox, webkit } from "@playwright/test";
 
+const headless = process.env.HEAD ? true : false;
+
 const options: LaunchOptions = {
-    headless: !true,
+    headless: headless,
     args: ['--window-size=1920,1040']
 }
 export const launchBrowser = () => {
-    const browserType = process.env.BROWSER || "chrome";
-    switch (browserType) {
+    
+    switch (process.env.BROWSER) {
         case "chrome":
             return chromium.launch(options);
         case "firefox":
@@ -14,7 +16,7 @@ export const launchBrowser = () => {
         case "webkit":
             return webkit.launch(options);
         default:
-            throw new Error("Please set the proper browser!")
+            return chromium.launch(options);
     }
 
 }

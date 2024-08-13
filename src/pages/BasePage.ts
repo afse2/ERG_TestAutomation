@@ -59,4 +59,9 @@ export class BasePage {
   async goBack(){
     await this.page.goBack();
   }
+  
+  async checkButtonWithName(buttonName:string) {
+        
+    return (await this.page.getByRole("button", {name: buttonName})).isVisible();
+  }
 }

@@ -1,4 +1,4 @@
-@YR-2204 @ProfilePage
+@YR-2204 @ProfilePage 
 Feature: As a user, I should be able to display profile menu; so that I can change my password and logout
 
   Background:

@@ -6,10 +6,12 @@ import { ProfilePage } from "../../pages/ProfilePage";
 
 let profilePage:ProfilePage;
 
-Given('User should be able to login', async function () {
+Given('User should be able to login', async function (this:CustomWorld) {
     const pageManager = new PageManager(this.page);
     profilePage = pageManager.getProfilePage();
+    this.managementPage = pageManager.getManagementPage();
     const loginPage = pageManager.getLoginPage();
+    const brandsPage = pageManager.getBrandsPage();
     await loginPage.navigateTo(process.env.BASEURL);
     await loginPage.login(process.env.USERNAME, process.env.PASSWORD);
 
