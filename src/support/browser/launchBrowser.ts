@@ -6,9 +6,10 @@ const options: LaunchOptions = {
     headless: headless,
     args: ['--window-size=1920,1040']
 }
+
 export const launchBrowser = () => {
     
-    switch (process.env.BROWSER) {
+    switch (process.env.npm_config_BROWSER) {
         case "chrome":
             return chromium.launch(options);
         case "firefox":

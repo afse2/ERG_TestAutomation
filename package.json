@@ -11,7 +11,8 @@
     "test:smoke": "cross-env ENV=test FORCE_COLOR=0 TAGS=@smoke cucumber-js --config=cucumber.js",
     "test:tag": "cross-env ENV=test FORCE_COLOR=0 TAGS=%npm_config_TAGS% cucumber-js --config=cucumber.js",
     "test:firefox": "cross-env ENV=test FORCE_COLOR=0 BROWSER=firefox cucumber-js --config=cucumber.js",
-    "check-env": "cross-env BROWSER=firefox node -e \"console.log(process.env.BROWSER);\"",
+    "test:safari": "cross-env ENV=test FORCE_COLOR=0 BROWSER=webkit cucumber-js --config=cucumber.js",
+    "test:browser": "cross-env ENV=test FORCE_COLOR=0 BROWSER=%npm_config_BROWSER% cucumber-js --config=cucumber.js",
     "posttest": "npx ts-node src/support/report/report.ts",
     "test:failed": "cucumber-js -p rerun @rerun.txt"
   },

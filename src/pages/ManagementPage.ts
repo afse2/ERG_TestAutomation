@@ -35,16 +35,7 @@ export class ManagementPage extends BasePage {
         return JSON.stringify(actualItemNames) == JSON.stringify(itemsName);
     }
 
-    async clickWithButtonName(navbarItems: Locator, buttonName: string) {
-        const optionsCount = await navbarItems.count();
-        for(let i = 0; i<optionsCount; i++){
-            
-            if(await navbarItems.nth(i).textContent() == buttonName){
-                return await navbarItems.nth(i).click();
-            }
-        }
-    }
-
-   
     
 }
+
+module.exports = { ManagementPage };

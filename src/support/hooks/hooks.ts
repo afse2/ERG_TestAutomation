@@ -9,15 +9,14 @@ let browser: Browser;
 let context: BrowserContext;
 
 BeforeAll(async function () {
-   getEnv();
-   browser = await launchBrowser();
+    getEnv();
+    browser = await launchBrowser();
 });
 
-setDefaultTimeout(60 * 1000 *2);
+setDefaultTimeout(60 * 1000 * 2);
 
-// It will trigger for not auth scenarios
 Before(async function ({ pickle }) {
-    const scenarioName = pickle.name + pickle.id
+    const scenarioName = pickle.name + pickle.id;
     context = await browser.newContext({
         recordVideo: {
             dir: "test-results/videos",
@@ -27,7 +26,8 @@ Before(async function ({ pickle }) {
         name: scenarioName,
         title: pickle.name,
         sources: true,
-        screenshots: true, snapshots: true
+        screenshots: true,
+        snapshots: true,
     });
     const page = await context.newPage();
     this.page = page;
@@ -36,39 +36,46 @@ Before(async function ({ pickle }) {
 After(async function ({ pickle, result }) {
     let videoPath: string;
     let img: Buffer;
-    const path = `./test-results/trace/${pickle.id}.zip`;
+    const tracePath = `./test-results/trace/${pickle.id}.zip`;
+
     if (result?.status == Status.FAILED) {
-        img = await this.page.screenshot(
-            { path: `./test-results/screenshots/${pickle.name}.png`, type: "png" })
-        videoPath = await this.page.video().path();
+        img = await this.page.screenshot({
+            path: `./test-results/screenshots/${pickle.name}.png`,
+            type: "png",
+        });
+
+        const video = this.page.video();
+        if (video) {
+            videoPath = await video.path();
+        } else {
+            console.warn('No video found for this test.');
+        }
     }
-    await context.tracing.stop({ path: path });
+
+    await context.tracing.stop({ path: tracePath });
     await this.page.close();
     await context.close();
+
     if (result?.status == Status.FAILED) {
-        await this.attach(
-            img, "image/png"
-        );
-        await this.attach(
-            fs.readFileSync(videoPath),
-            'video/webm'
-        );
-        const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${path}</a>`
+        if (img) {
+            await this.attach(img, "image/png");
+        }
+        if (videoPath && fs.existsSync(videoPath)) {
+            const videoBuffer = await fs.readFile(videoPath);
+            await this.attach(videoBuffer, 'video/webm');
+        } else {
+            console.warn(`Video file not found: ${videoPath}`);
+        }
+        const traceFileLink = `<a href="https://trace.playwright.dev/">Open ${tracePath}</a>`;
         await this.attach(`Trace file: ${traceFileLink}`, 'text/html');
-
     }
-
 });
 
 AfterAll(async function () {
     await browser.close();
-})
+});
 
 function getStorageState(user: string): string | { cookies: { name: string; value: string; domain: string; path: string; expires: number; httpOnly: boolean; secure: boolean; sameSite: "Strict" | "Lax" | "None"; }[]; origins: { origin: string; localStorage: { name: string; value: string; }[]; }[]; } {
-    if (user.endsWith("admin"))
-        return "src/helper/auth/admin.json";
-    else if (user.endsWith("lead"))
-        return "src/helper/auth/lead.json";
+    if (user.endsWith("admin")) return "src/helper/auth/admin.json";
+    else if (user.endsWith("lead")) return "src/helper/auth/lead.json";
 }
-
-
