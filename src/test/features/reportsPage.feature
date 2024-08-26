@@ -5,7 +5,7 @@ Background:
     Given User should be able to login
     When User click Raporlar tab on navbar
 
-
+@smoke
 Scenario: User should be able to display the monthly report on a daily basis
     Given User select this month option from date dropdown
     When User select daily option from basis dropdown
@@ -13,7 +13,7 @@ Scenario: User should be able to display the monthly report on a daily basis
 
 
 Scenario: User should be able to display the monthly report on a monthly basis
-    Given User select this month from date dropdown
+    Given User select this month option from date dropdown
     When User select monthly option from basis dropdown
     Then Verify that the reports for the current month are displayed on a monthly basis
 
@@ -202,7 +202,7 @@ Scenario: User should be able to export report page as excel format
     Given User click on XLS button on Facility Report Page
     Then Verify that the downloaded excel file and reports page datas are matched
 
-@smoke
+
 Scenario: User should be able to filter the reports by a specific date range
     Given User select the start date as 
     When User select the end date as 

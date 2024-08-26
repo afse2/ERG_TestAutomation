@@ -12,6 +12,8 @@ Given('User should be able to login', async function (this:CustomWorld) {
     this.managementPage = pageManager.getManagementPage();
     const loginPage = pageManager.getLoginPage();
     this.brandsPage = pageManager.getBrandsPage();
+    this.reportPage = pageManager.getReportPage();
+    
     await loginPage.navigateTo(process.env.BASEURL);
     await loginPage.login(process.env.USERNAME, process.env.PASSWORD);
     await loginPage.waitForNavigation();

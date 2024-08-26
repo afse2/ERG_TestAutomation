@@ -3,6 +3,7 @@ import { LoginPage } from "./LoginPage";
 import { ProfilePage } from "./ProfilePage";
 import { ManagementPage } from "./ManagementPage";
 import { BrandsPage } from "./BrandPage";
+import { ReportPage } from "./ReportPage";
 
 
 
@@ -12,6 +13,7 @@ export class PageManager {
     private profilePage: ProfilePage;
     private managementPage: ManagementPage;
     private brandsPage : BrandsPage;
+    private reportPage : ReportPage;
 
 
     constructor(page: Page) {
@@ -20,6 +22,7 @@ export class PageManager {
         this.profilePage = new ProfilePage(this.page);
         this.managementPage = new ManagementPage(this.page);
         this.brandsPage = new BrandsPage(this.page);
+        this.reportPage = new ReportPage(this.page);
     }
 
     getLoginPage() {
@@ -36,6 +39,10 @@ export class PageManager {
     
     getBrandsPage() {
         return this.brandsPage;
+    }
+
+    getReportPage(){
+        return this.reportPage;
     }
 
 }

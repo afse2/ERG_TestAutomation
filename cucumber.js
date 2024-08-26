@@ -9,7 +9,7 @@ module.exports = {
             "src/test/features/"
         ],
         //publishQuiet: true,
-        dryRun: true,
+        dryRun: false,
         require: [
             "src/test/steps/*.ts",
             "src/support/hooks/hooks.ts",
