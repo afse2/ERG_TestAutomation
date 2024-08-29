@@ -12,6 +12,8 @@ export class CustomWorld extends World{
     managementPage: ManagementPage;
     brandsPage: BrandsPage;
     reportPage: ReportPage;
+    complianceRate: string;
+    dateOptionNumber: number;
     
 
 
@@ -24,6 +26,8 @@ export class CustomWorld extends World{
         this.managementPage = null;
         this.brandsPage = null;
         this.reportPage = null;
+        this.complianceRate = null;
+        this.dateOptionNumber = null;
     }
 
 }

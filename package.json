@@ -31,6 +31,7 @@
     "allure-commandline": "^2.30.0",
     "allure-cucumberjs": "^3.0.0-beta.9",
     "cross-env": "^7.0.3",
+    "date-fns": "^3.6.0",
     "typescript": "^5.5.4"
   }
 }

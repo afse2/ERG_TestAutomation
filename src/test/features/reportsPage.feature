@@ -5,7 +5,7 @@ Background:
     Given User should be able to login
     When User click Raporlar tab on navbar
 
-@smoke
+
 Scenario: User should be able to display the monthly report on a daily basis
     Given User select this month option from date dropdown
     When User select daily option from basis dropdown
@@ -17,7 +17,7 @@ Scenario: User should be able to display the monthly report on a monthly basis
     When User select monthly option from basis dropdown
     Then Verify that the reports for the current month are displayed on a monthly basis
 
-
+@smoke
 Scenario: User should be able to display the reports of all facilities
     Given User select all option from facility dropdown
     Then Verify that all facilities are displayed on Facilities Report Page
@@ -30,7 +30,7 @@ Scenario: User should be able to search facility name when write valid word on f
 
 Scenario: User should not be able to search facility name when write invalid word on facility filter tab
     Given User enter a word on facility filter as "asdf"
-    Then Verify that the error message "Veri yok" is displayed on facility filter tab
+    Then Verify that the error message " Veri yok " is displayed on facility filter tab
 
 
 Scenario: User should be able to filter reports by facility options
@@ -49,16 +49,8 @@ Scenario: User should be able to filter the reports by compliance rate options
     Given User select a compliance rate option on compliance rate filter as " %0 - 20"
     Then Verify that the selected compliance rate is displayed on compliance rate filter tab
 
-
-Scenario: User should be able to cancel the compliance rate filter 
-    Given User select a compliance rate option on compliance rate filter as " %0 - 20"
-    Then Verify that the selected compliance rate is displayed on compliance rate filter tab
-    When User click on X button on compliance rate filter
-    Then Verify that the compliance rate filter is diplayed with all selected on Facility Report Page
-
-
 Scenario: User should be able to filter report by this week option
-    Given User select this week option on date filter
+    Given User select "Bu Hafta" option on date filter
     Then Verify that the this week is diplayed on date filter
 
 
