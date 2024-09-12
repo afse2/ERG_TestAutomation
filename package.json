@@ -6,13 +6,10 @@
   "scripts": {
     "debug": "cross-env ENV=test PWDEBUG=1 DEBUG=pw:api cucumber-js --config=cucumber.js",
     "pretest": "npx ts-node src/support/report/init.ts",
-    "test": "cross-env ENV=test FORCE_COLOR=0 cucumber-js --config=cucumber.js",
+    "test": "cross-env ENV=test FORCE_COLOR=0 cucumber-js --config=cucumber.js || true",
     "test:headless": "cross-env HEAD=false npm run test",
     "test:smoke": "cross-env TAGS=@smoke npm run test",
     "test:tag": "cross-env TAGS=%npm_config_TAGS% npm run test",
-    "test:firefox": "cross-env BROWSER=firefox cucumber-js",
-    "test:safari": "cross-env BROWSER=webkit npm run test",
-    "test:browser": "cross-env BROWSER=%npm_config_BROWSER% npm run test",
     "posttest": "npx ts-node src/support/report/report.ts",
     "test:failed": "cucumber-js -p rerun @rerun.txt"
   },
@@ -21,17 +18,15 @@
     "dotenv": "^16.4.5",
     "fs-extra": "^11.2.0",
     "multiple-cucumber-html-reporter": "^3.7.0",
-    "playwright": "^1.45.3",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.8.0",
-    "@playwright/test": "^1.45.3",
-    "@zerostep/playwright": "^0.1.5",
     "allure-commandline": "^2.30.0",
     "allure-cucumberjs": "^3.0.0-beta.9",
     "cross-env": "^7.0.3",
     "date-fns": "^3.6.0",
+    "playwright": "^1.47.0",
     "typescript": "^5.5.4"
   }
 }

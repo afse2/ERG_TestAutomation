@@ -1,22 +1,21 @@
-import { LaunchOptions, chromium, firefox, webkit, ChromiumBrowser, FirefoxBrowser, WebKitBrowser, Browser  } from "@playwright/test";
+import { LaunchOptions, chromium, firefox, webkit } from "playwright";
 
 const headless = process.env.HEAD ? true : false;
 
 const options: LaunchOptions = {
     headless: headless,
-    args: ["--start-maximized", "--disable-extensions", "--disable-plugins"],
+    slowMo: 0,
+    args: ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'],
     firefoxUserPrefs: {
-        'media.navigator.streams.fake': true,
-        'media.navigator.permission.disabled': true,
+      'media.navigator.streams.fake': true,
+      'media.navigator.permission.disabled': true,
     },
 }
 
 
 export const launchBrowser = () => {
-    const browserType = process.env.BROWSER || 'chromium';
+    const browserType = process.env.npm_config_BROWSER || 'chromium';
     
-    console.log(`Launching browser: ${browserType}`);
-
     switch (browserType) {
         case "chrome":
             return chromium.launch(options);

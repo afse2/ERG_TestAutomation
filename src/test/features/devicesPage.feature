@@ -2,7 +2,7 @@ Feature: As a user, I should be able to display Devices Page; add, edit, sort an
 
 Background:
     Given User should be able to login
-    When User click Devices tab on navbar
+    When User click on Devices tab on navbar
 
 Scenario: User should be able to create a new device on Devices Page
     Given User click on Add Device button
@@ -27,7 +27,7 @@ Scenario: User should be able to edit a existing device
 
 Scenario: User should be able to display edit options when click on three dots sign 
     Given User click on three dots sign near the selected device "AF:AF:AF:12:34:56"
-    Then Verify that the options "Duzenle", "Sil", "Tb access token" are displayed on dropdown
+    Then Verify that the options "Duzenle", "Sil", "Tb access token" are displayed on edit menu
 
 Scenario: User should be able to renew the thingsboard token of a gateway device
     Given User click on three dots sign near the selected gateway device "AF:AF:AF:12:34:56"
@@ -50,16 +50,16 @@ Scenario: User should be able to filter devices by brands name
 Scenario: User should be able to reset brands filter when click on x button
     Given User select "ofis test" option from brands dropdown
     When User click on x button
-    Then Verify that the all brands device are displayed on Devices Page
+    Then Verify that the all brands devices are displayed on Devices Page
 
 Scenario: User should be able to filter devices by facility name
-    Given User select "ofis test" option from facilities dropdown
+    Given User select "test1" option from facilities dropdown
     Then Verify that the selected facility's devices are displayed on Devices Page
 
 Scenario: User should be able to reset facility filter when click on x button
-    Given User select "ofis test" option from facilities dropdown
+    Given User select "test1" option from facilities dropdown
     When User click on x button
-    Then Verify that the all facilities device are displayed on Devices Page
+    Then Verify that the all facilities devices are displayed on Devices Page
 
 Scenario: User should be able to display selected brand's facilities on facilities dropdown
     Given User select "ofis test" option from brands dropdown
@@ -115,7 +115,7 @@ Scenario: User should not be able to navigate previous page when land on the fir
     Given User click on 1 button on pagination section
     Then Verify that the < button is not enable
 
-Scenario: User should not be able to navigate next page when lan on the last page 
+Scenario: User should not be able to navigate next page when land on the last page 
     Given User click on last page button on pagination section
     Then Verify that the > button is not enable
 
@@ -134,6 +134,17 @@ Scenario: User should be able to navigate first page when change Device type fil
     When User select "Gateway" option from Device type dropdown
     Then Verify that first page is displayed on Devices Page
 
+Scenario: User should not be able to delete an existing device when click on X button
+    Given User click on three dots sign near the selected device "AF:AF:AF:12:34:56"
+    When User click on delete button
+    And User click on X button on delete device pop-up
+    Then Verify that the device with mac id "AF:AF:AF:12:34:56" and device type "Sabun" is displayed on Devices Page
+
+Scenario: User should be able to delete an existing device
+    Given User click on three dots sign near the selected device "AF:AF:AF:12:34:56"
+    When User click on delete button 
+    And User click on delete device button
+    Then Verify that the device with mac id "AF:AF:AF:12:34:56" is not displayed on Device Page
     
 
 

@@ -1,5 +1,5 @@
 import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from "@cucumber/cucumber";
-import { Browser, BrowserContext } from "@playwright/test";
+import { Browser, BrowserContext } from "playwright";
 import { launchBrowser } from "../browser/launchBrowser";
 import { getEnv } from "../env/env";
 
