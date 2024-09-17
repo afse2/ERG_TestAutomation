@@ -62,7 +62,7 @@ Scenario: User should be able to reset status filter when click on x button
     Then Verify that the all status licences are displayed on Licences Page
 
 Scenario: User should be able to search brands name when enter valid value on brands filter tab
-    Given  Given User enter a value on brands filter as "Mar"
+    Given User enter a value on brands filter as "Mar"
     Then Verify that the brands name contain the value are displayed on brands filter tab
 
 Scenario: User should not be able to search brand name when enter invalid value on brands filter tab
@@ -95,7 +95,7 @@ Scenario: User should be able to navigate next page when click on > button
 
 Scenario: User should be able to navigate previous page when click on < button
     Given User click on "2" pagination section on Licences Page
-    When User click on save changes button on Licences Page
+    When User click on < button on Licence Page
     Then Verify that the previous page is diplayed
 
 Scenario: User should not be able to navigate previous page when land on the first page
