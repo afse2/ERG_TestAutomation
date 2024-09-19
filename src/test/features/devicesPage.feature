@@ -108,7 +108,7 @@ Scenario: User should be able to navigate next page when click on > button
 
 Scenario: User should be able to navigate previous page when click on < button
     Given User click on "2" pagination section on Devices Page
-    When User click on save changes button on Devices Page
+    When User click on < button on Devices Page
     Then Verify that the previous page is diplayed
 
 Scenario: User should not be able to navigate previous page when land on the first page

@@ -190,4 +190,4 @@ Scenario: User should be able to delete an existing user
     And User click on delete user button
     Then Verify that the user with "test1@test.com" mail is not displayed on Users Page
 
-
+    
