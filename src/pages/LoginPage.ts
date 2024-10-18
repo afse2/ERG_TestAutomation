@@ -45,6 +45,7 @@ export class LoginPage extends BasePage {
     await this.password.fill(password);
     await this.signInButton.click();
    }
+
 }
 
 module.exports = { LoginPage };

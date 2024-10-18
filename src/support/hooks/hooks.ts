@@ -2,38 +2,38 @@ import { BeforeAll, AfterAll, Before, After, Status, setDefaultTimeout } from "@
 import { Browser, BrowserContext } from "playwright";
 import { launchBrowser } from "../browser/launchBrowser";
 import { getEnv } from "../env/env";
+import { CustomWorld } from "../custom-world";
+import { LoginPage } from "../../pages/LoginPage";
 
 const fs = require("fs-extra");
 
 let browser: Browser;
-let context: BrowserContext;
 
-BeforeAll(async function () {
+BeforeAll(async function (this:CustomWorld) {
     getEnv();
     browser = await launchBrowser();
 });
 
 setDefaultTimeout(60 * 1000 * 2);
 
-Before(async function ({ pickle }) {
+Before(async function (this:CustomWorld, { pickle }) {
     const scenarioName = pickle.name + pickle.id;
-    context = await browser.newContext({
+    this.context = await browser.newContext({
         recordVideo: {
             dir: "test-results/videos",
         },
     });
-    await context.tracing.start({
+    await this.context.tracing.start({
         name: scenarioName,
         title: pickle.name,
         sources: true,
         screenshots: true,
         snapshots: true,
     });
-    const page = await context.newPage();
-    this.page = page;
+    this.page = await this.context.newPage();   
 });
 
-After(async function ({ pickle, result }) {
+After(async function (this: CustomWorld, { pickle, result }) {
     let videoPath: string;
     let img: Buffer;
     const tracePath = `./test-results/trace/${pickle.id}.zip`;
@@ -52,9 +52,9 @@ After(async function ({ pickle, result }) {
         }
     }
 
-    await context.tracing.stop({ path: tracePath });
+    await this.context.tracing.stop({ path: tracePath });
     await this.page.close();
-    await context.close();
+    await this.context.close();
 
     if (result?.status == Status.FAILED) {
         if (img) {

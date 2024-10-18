@@ -3,7 +3,8 @@ import { expect } from "playwright/test";
 import { CustomWorld } from "../../support/custom-world";
 
 
-Then('Verify that the Marka Ekle button and {string} header is diplayed on Brands Page', async function (header) {
+Then('Verify that the Marka Ekle button and {string} header is diplayed on Brands Page', async function (this:CustomWorld, header: string) {
+  await this.brandsPage.waitForTimeout(500);
   expect(await this.brandsPage.brandHeader.textContent()).toEqual(header); 
   expect(await this.brandsPage.addBrand.isVisible()).toBeTruthy();
 });
@@ -44,7 +45,7 @@ Given('User click on pen icon near the {string} brand', async function (this: Cu
 });
 
 When('User edit brand name as {string}', async function (this: CustomWorld, brandName) {
-  await this.brandsPage.brandNameInputbox.fill(brandName);
+  await this.brandsPage.editBrandName.fill(brandName);
 });
 
 
@@ -79,5 +80,7 @@ When('User click on Evet button', async function (this:CustomWorld) {
 });
 
 Then('Verify that the {string} brand is not displayed on Brands Page', async function (this: CustomWorld, brandName) {
+  await this.brandsPage.waitForTimeout(1000);
   expect((await this.brandsPage.checkBrand(brandName))).toBeFalsy;
 });
+

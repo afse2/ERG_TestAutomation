@@ -1,7 +1,5 @@
 import { Given, When, Then, setDefaultTimeout } from "@cucumber/cucumber";
 import { expect } from "playwright/test";
-import { PageManager } from "../../pages/PageManager";
-import { ManagementPage } from "../../pages/ManagementPage";
 import { CustomWorld } from "../../support/custom-world";
 
 

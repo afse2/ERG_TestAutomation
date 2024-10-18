@@ -1,7 +1,7 @@
 import { Locator, Page } from "playwright";
 import { BasePage } from "./BasePage";
 import { expect } from "playwright/test";
-import { parse, isToday, isThisWeek, isThisMonth, isThisYear, isSameDay } from 'date-fns';
+import { parse, isToday, isThisWeek, isThisMonth, isThisYear, isSameDay, startOfWeek, endOfWeek, isWithinInterval, startOfDay, endOfDay, format } from 'date-fns';
 
 
 
@@ -28,7 +28,7 @@ export class ReportPage extends BasePage {
     facilityFilterClear: Locator;
     complianceRateDropdown: Locator;
     complianceRateOptions: Locator;
-    comlianceRates: Locator;
+    complianceRates: Locator;
     noDataMessage: Locator;
     dateOptions: Locator;
     dateTableHeader: Locator;
@@ -39,12 +39,20 @@ export class ReportPage extends BasePage {
     unexpectedSuccessTableHeader: Locator;
     unexpectedFailTableHeader: Locator;
     totalTableHeader: Locator;
-    
+    dateRange: Locator;
+    successNumber: Locator;
+    failNumber: Locator;
+    unexpectedSuccessNumber: Locator;
+    unexpectedFailNumber: Locator;
+    totalNumber: Locator;
+    paginationNumbers: Locator;
+    paginationMenu: Locator;
+
 
     constructor(page: Page) {
         super(page);
 
-        this.reportTab = page.locator("div.item");
+        this.reportTab = page.locator("div.item:has-text('Raporlar')");
         this.thisMonth = page.locator("div.n-dropdown-option-body__label").nth(3);
         this.basisDropdown = page.locator("div.n-base-selection-input");
         this.dailyBasis = page.locator("[data-label= 'Günlük']");
@@ -62,10 +70,11 @@ export class ReportPage extends BasePage {
         this.selectedFacility = page.locator("div.n-base-selection-overlay__wrapper span");
         this.facilityFilterClear = page.locator("div.n-base-clear__clear");
         this.complianceRateDropdown = page.locator("button.n-button--tertiary-type").nth(0);
-        this.complianceRateOptions = page.locator("n-radio check-item");
-        this.comlianceRates = page.locator("td[data-col-key='compliance']");
+        this.complianceRateOptions = page.locator("n-radio__label");
+        this.complianceRates = page.locator("td[data-col-key='compliance']");
         this.noDataMessage = page.locator("div.n-data-table-empty");
-        this.dateOptions = page.locator("div.n-dropdown-option");
+        this.dateRange = page.locator("span.n-button__content label");
+        this.dateOptions = page.locator("div.n-dropdown-option-body__label");
         this.dateTableHeader = page.locator("th[data-col-key='timestamp']");
         this.complianceTableHeader = page.locator("th[data-col-key='compliance']");
         this.facilityTableHeader = page.locator("th[data-col-key='facilityName']");
@@ -74,10 +83,13 @@ export class ReportPage extends BasePage {
         this.unexpectedSuccessTableHeader = page.locator("th[data-col-key='unexpected_success']");
         this.unexpectedFailTableHeader = page.locator("th[data-col-key='unexpected_fail']");
         this.totalTableHeader = page.locator("th[data-col-key='total']");
-
-
-
-
+        this.successNumber = page.locator("td[data-col-key='success']");
+        this.failNumber = page.locator("td[data-col-key='fail']");
+        this.unexpectedSuccessNumber = page.locator("td[data-col-key='unexpected_success']");
+        this.unexpectedFailNumber = page.locator("td[data-col-key='unexpected_fail']");
+        this.totalNumber = page.locator("td[data-col-key='total']");
+        this.paginationNumbers = page.locator("div.n-pagination-item:not(.n-pagination-item--button)");
+        this.paginationMenu = page.locator("div[class='n-pagination-item']");
 
     }
 
@@ -272,14 +284,20 @@ export class ReportPage extends BasePage {
     }
 
     async selectComplianceRate(complianceRate: string) {
-        const optionsCount = await this.complianceRateOptions.count();
 
-        for (let i = 0; i < optionsCount; i++) {
+        await this.page.getByLabel(complianceRate).check();
+        // const optionsCount = await this.complianceRateOptions.count();
+        // console.log(optionsCount);
 
-            if (await this.complianceRateOptions.nth(i).textContent() == complianceRate) {
-                return await this.complianceRateOptions.nth(i).click();
-            }
-        }
+        // for (let i = 0; i < optionsCount; i++) {
+        //     console.log(await this.complianceRateOptions.nth(i).textContent());
+        //     //console.log(complianceRate);
+
+        //     if (await this.complianceRateOptions.nth(i).textContent() == complianceRate) {
+        //         console.log("inside if");
+        //         return await this.complianceRateOptions.nth(i).click();
+        //     }
+        // }
     }
 
     async checkComplianceRate(rate: string) {
@@ -298,12 +316,11 @@ export class ReportPage extends BasePage {
 
         while (hasNextPage) {
 
-            const rateCount = await this.comlianceRates.count();
+            const rateCount = await this.complianceRates.count();
 
             for (let i = 0; i < rateCount; i++) {
-                const rateText = await this.comlianceRates.nth(i).innerText();
+                const rateText = await this.complianceRates.nth(i).innerText();
                 const complianceRate = parseFloat(rateText.replace('%', '').trim());
-
                 expect(complianceRate).toBeGreaterThanOrEqual(minRate);
                 expect(complianceRate).toBeLessThanOrEqual(maxRate);
             }
@@ -322,7 +339,9 @@ export class ReportPage extends BasePage {
     async selectDate(date: string) {
         const dateCount = await this.dateOptions.count();
 
+
         for (let i = 0; i < dateCount; i++) {
+
             if (await this.dateOptions.nth(i).textContent() == date) {
                 await this.dateOptions.nth(i).click();
                 return i;
@@ -334,12 +353,13 @@ export class ReportPage extends BasePage {
     async chechDataDateMatchSelectedFilter(dateOptionNumber: number) {
 
         let isDateInRange: (date: Date) => boolean;
+        let dateRange = await this.dateRange.innerText();
 
         const today = new Date();
 
         let dateFilter: string;
 
-        switch(dateOptionNumber){
+        switch (dateOptionNumber) {
             case 0:
                 dateFilter = 'Today';
                 break;
@@ -352,41 +372,65 @@ export class ReportPage extends BasePage {
             case 3:
                 dateFilter = 'This Month';
                 break;
-            case 4: 
+            case 4:
                 dateFilter = 'This Year';
                 break;
         }
 
         switch (dateFilter) {
-
-            case 'Today':
-                isDateInRange = (date) => isToday(date);
+            case 'Today': {
+                const today = startOfDay(new Date());
+                isDateInRange = (date) => date.getTime() === today.getTime();
+                console.log(`Date Range for Today: ${format(today, 'dd/MM/yyyy')}`);
                 break;
-            case 'This Week':
-                isDateInRange = (date) => isThisWeek(date);
+            }
+            case 'This Week': {
+                const today = new Date();
+                const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Monday start
+                const endOfCurrentWeek = endOfWeek(today, { weekStartsOn: 1 }); // Sunday end
+                // Convert to the start and end of day for proper comparison
+                const startOfWeekDay = startOfDay(startOfCurrentWeek);
+                const endOfWeekDay = endOfDay(endOfCurrentWeek);
+                dateRange = `${format(startOfWeekDay, 'dd/MM/yyyy')} - ${format(endOfWeekDay, 'dd/MM/yyyy')}`;
+                isDateInRange = (date) => isWithinInterval(date, { start: startOfWeekDay, end: endOfWeekDay });
+                console.log(`Date Range for This Week: ${dateRange}`);
                 break;
-            case 'Last Week':
-                isDateInRange = (date) => {
-                    const lastWeekStart = new Date(today);
-                    lastWeekStart.setDate(today.getDate() - today.getDay() - 6);
-                    const lastWeekEnd = new Date(lastWeekStart);
-                    lastWeekEnd.setDate(lastWeekStart.getDate() + 6);
-                    return date >= lastWeekStart && date <= lastWeekEnd;
-                };
+            }
+            case 'Last Week': {
+                const [startDateStr, endDateStr] = dateRange.split(' - ').map(date => date.trim());
+                const startDate = startOfDay(parse(startDateStr, 'dd/MM/yyyy', new Date()));
+                const endDate = endOfDay(parse(endDateStr, 'dd/MM/yyyy', new Date()));
+                isDateInRange = (date) => isWithinInterval(date, { start: startDate, end: endDate });
+                console.log(`Date Range for Last Week: ${dateRange}`);
                 break;
-            case 'This Month':
-                isDateInRange = (date) => isThisMonth(date);
+            }
+            case 'This Month': {
+                const today = new Date();
+                const startOfMonth = startOfDay(new Date(today.getFullYear(), today.getMonth(), 1));
+                const endOfMonth = endOfDay(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+                isDateInRange = (date) => isWithinInterval(date, { start: startOfMonth, end: endOfMonth });
+                console.log(`Date Range for This Month: ${format(startOfMonth, 'dd/MM/yyyy')} - ${format(endOfMonth, 'dd/MM/yyyy')}`);
                 break;
-            case 'This Year':
-                isDateInRange = (date) => isThisYear(date);
+            }
+            case 'This Year': {
+                const today = new Date();
+                const startOfYear = startOfDay(new Date(today.getFullYear(), 0, 1));
+                const endOfYear = endOfDay(new Date(today.getFullYear(), 11, 31));
+                isDateInRange = (date) => isWithinInterval(date, { start: startOfYear, end: endOfYear });
+                console.log(`Date Range for This Year: ${format(startOfYear, 'dd/MM/yyyy')} - ${format(endOfYear, 'dd/MM/yyyy')}`);
                 break;
-            case 'Custom Date':
-                // Assume you handle custom date selection elsewhere in your test
-                // You would need to pass the custom date range to this function
-                throw new Error("Custom Date handling not implemented in this function");
+            }
+            case 'Custom': {
+                // dateRange = await page.locator('.custom-date-range-selector').innerText(); // Example selector
+                // const [startDateStr, endDateStr] = dateRange.split(' - ').map(date => date.trim());
+                // const startDate = startOfDay(parse(startDateStr, 'dd/MM/yyyy', new Date()));
+                // const endDate = endOfDay(parse(endDateStr, 'dd/MM/yyyy', new Date()));
+                // isDateInRange = (date) => isWithinInterval(date, { start: startDate, end: endDate });
+                // console.log(`Custom Date Range: ${dateRange}`);
+                // break;
+            }
             default:
-                throw new Error(`Unknown date filter: ${dateFilter}`);
-
+                throw new Error(`Unsupported date filter: ${dateFilter}`);
         }
 
         let hasNextPage = true;
@@ -397,26 +441,505 @@ export class ReportPage extends BasePage {
 
             for (let i = 0; i < dateCount; i++) {
                 const dateText = await this.dates.nth(i).innerText();
-                const dataDate = parse(dateText, 'dd/mm/yyyy', new Date());
+                const parsedDate = parse(dateText, 'dd/MM/yyyy', new Date());
 
-                if (!isDateInRange(dataDate)) {
-                    throw new Error(`Date ${dateText} does not match the selected filter ${dateFilter}`);
+                // Convert parsed date to start of day for comparison
+                const dateToCompare = startOfDay(parsedDate);
+
+                if (!isDateInRange(dateToCompare)) {
+                    console.error(`Date ${format(dateToCompare, 'dd/MM/yyyy')} does not match the selected filter ${dateFilter}`);
+                    throw new Error(`Date ${format(dateToCompare, 'dd/MM/yyyy')} does not match the selected filter ${dateFilter}`);
+                }
+
+                hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+                if (hasNextPage) {
+                    await this.nextPageButton.click();
+
                 }
 
             }
-
-            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
-
-            if (hasNextPage) {
-                await this.nextPageButton.click();
-
-            }
-
         }
 
 
     }
 
+
+
+    async checkDateSorting(sortOrder: 'ascending' | 'descending') {
+        let allDates: Date[] = [];
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+
+            const dateCount = await this.dates.count();
+
+            for (let i = 0; i < dateCount; i++) {
+                const dateText = await this.dates.nth(i).innerText();
+                const parsedDate = parse(dateText, 'dd/MM/yyyy', new Date());
+                allDates.push(parsedDate);
+            }
+
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+
+
+        // Step 3: Check if dates are sorted in the specified order
+        for (let i = 0; i < allDates.length - 1; i++) {
+            if (sortOrder === 'ascending' && allDates[i] > allDates[i + 1]) {
+                throw new Error('Dates are not sorted in ascending order.');
+            }
+            if (sortOrder === 'descending' && allDates[i] < allDates[i + 1]) {
+                throw new Error('Dates are not sorted in descending order.');
+            }
+        }
+
+        console.log(`Dates are sorted in ${sortOrder} order.`);
+    }
+
+    // Function to check compliance rate sorting
+    async checkComplianceRateSorting(sortOrder: 'ascending' | 'descending') {
+
+        // Step 1: Retrieve and parse the compliance rate values
+        const complianceRates = [];
+        
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+
+            const complianceCount = await this.complianceRates.count();
+            for (let i = 0; i < complianceCount; i++) {
+                const rateText = await this.complianceRates.nth(i).innerText();
+                // Remove any % symbol and trim spaces, then parse as number
+                const rateValue = parseFloat(rateText.replace('%', '').trim());
+                complianceRates.push(rateValue);
+            }
+
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+
+        // Step 2: Check if the compliance rates are sorted correctly
+        let isSorted = true;
+
+        if (sortOrder === 'ascending') {
+            for (let i = 1; i < complianceRates.length; i++) {
+                if (complianceRates[i] < complianceRates[i - 1]) {
+                    console.log(complianceRates[i]);
+                    console.log(complianceRates[i-1]);
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            for (let i = 1; i > complianceRates.length; i++) {
+                if (complianceRates[i] < complianceRates[i - 1]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+
+        // Step 4: Log and validate the sorting result
+        // console.log(`Compliance Rates: ${complianceRates.join(', ')}`);
+        // console.log(`Expected Sort Order: ${sortOrder}`);
+
+        expect(isSorted, `Compliance rates are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkFacilityNameSorting(sortOrder: 'ascending' | 'descending') {
+    
+        // Step 2: Retrieve and store the facility names
+        const facilityNames = [];
+       
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const facilityCount = await this.facilitiesName.count();
+
+            for (let i = 0; i < facilityCount; i++) {
+                const nameText = await this.facilitiesName.nth(i).innerText();
+                facilityNames.push(nameText.trim());
+            }
+           
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+    
+        
+    
+        // Step 3: Check if the facility names are sorted correctly
+        let isSorted = true;
+        const sortedNames = [...facilityNames].sort((a, b) => a.localeCompare(b));
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < facilityNames.length; i++) {
+                if (facilityNames[i] !== sortedNames[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNames = sortedNames.reverse();
+            for (let i = 0; i < facilityNames.length; i++) {
+                if (facilityNames[i] !== sortedDescendingNames[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Facility Names: ${facilityNames.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Facility names are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkSuccessSorting(sortOrder: 'ascending' | 'descending') {
+        
+        // Step 2: Retrieve and store the success numbers
+        const successNumbers = [];
+        
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const successCount = await this.successNumber.count();
+            
+             
+        for (let i = 0; i < successCount; i++) {
+            const numberText = await this.successNumber.nth(i).innerText();
+            // Parse the number text to integer or float depending on your data
+            const numberValue = parseFloat(numberText.replace(',', '.').trim());
+            successNumbers.push(numberValue);
+        }
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+      
+    
+        // Step 3: Check if the success numbers are sorted correctly
+        let isSorted = true;
+        const sortedNumbers = [...successNumbers].sort((a, b) => a - b); // Ascending sort
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < successNumbers.length; i++) {
+                if (successNumbers[i] !== sortedNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNumbers = sortedNumbers.reverse();
+            for (let i = 0; i < successNumbers.length; i++) {
+                if (successNumbers[i] !== sortedDescendingNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Success Numbers: ${successNumbers.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Success numbers are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkFailSorting(sortOrder: 'ascending' | 'descending') {
+        
+        // Step 2: Retrieve and store the success numbers
+        const failNumber = [];
+        
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const successCount = await this.failNumber.count();
+            
+             
+        for (let i = 0; i < successCount; i++) {
+            const numberText = await this.failNumber.nth(i).innerText();
+            // Parse the number text to integer or float depending on your data
+            const numberValue = parseFloat(numberText.replace(',', '.').trim());
+            failNumber.push(numberValue);
+        }
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+      
+    
+        // Step 3: Check if the success numbers are sorted correctly
+        let isSorted = true;
+        const sortedNumbers = [...failNumber].sort((a, b) => a - b); // Ascending sort
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < failNumber.length; i++) {
+                if (failNumber[i] !== sortedNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNumbers = sortedNumbers.reverse();
+            for (let i = 0; i < failNumber.length; i++) {
+                if (failNumber[i] !== sortedDescendingNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Success Numbers: ${failNumber.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Success numbers are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkUnexpectedSuccessSorting(sortOrder: 'ascending' | 'descending') {
+        
+        // Step 2: Retrieve and store the success numbers
+        const unexpectedSuccessNumber = [];
+        
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const successCount = await this.unexpectedSuccessNumber.count();
+            
+             
+        for (let i = 0; i < successCount; i++) {
+            const numberText = await this.unexpectedSuccessNumber.nth(i).innerText();
+            // Parse the number text to integer or float depending on your data
+            const numberValue = parseFloat(numberText.replace(',', '.').trim());
+            unexpectedSuccessNumber.push(numberValue);
+        }
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+      
+    
+        // Step 3: Check if the success numbers are sorted correctly
+        let isSorted = true;
+        const sortedNumbers = [...unexpectedSuccessNumber].sort((a, b) => a - b); // Ascending sort
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < unexpectedSuccessNumber.length; i++) {
+                if (unexpectedSuccessNumber[i] !== sortedNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNumbers = sortedNumbers.reverse();
+            for (let i = 0; i < unexpectedSuccessNumber.length; i++) {
+                if (unexpectedSuccessNumber[i] !== sortedDescendingNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Success Numbers: ${unexpectedSuccessNumber.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Success numbers are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkUnexpectedFailSorting(sortOrder: 'ascending' | 'descending') {
+        
+        // Step 2: Retrieve and store the success numbers
+        const unexpectedFailNumber = [];
+        
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const successCount = await this.unexpectedFailNumber.count();
+            
+             
+        for (let i = 0; i < successCount; i++) {
+            const numberText = await this.unexpectedFailNumber.nth(i).innerText();
+            // Parse the number text to integer or float depending on your data
+            const numberValue = parseFloat(numberText.replace(',', '.').trim());
+            unexpectedFailNumber.push(numberValue);
+        }
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+      
+    
+        // Step 3: Check if the success numbers are sorted correctly
+        let isSorted = true;
+        const sortedNumbers = [...unexpectedFailNumber].sort((a, b) => a - b); // Ascending sort
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < unexpectedFailNumber.length; i++) {
+                if (unexpectedFailNumber[i] !== sortedNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNumbers = sortedNumbers.reverse();
+            for (let i = 0; i < unexpectedFailNumber.length; i++) {
+                if (unexpectedFailNumber[i] !== sortedDescendingNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Success Numbers: ${unexpectedFailNumber.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Success numbers are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async checkTotalSorting(sortOrder: 'ascending' | 'descending') {
+        
+        // Step 2: Retrieve and store the success numbers
+        const totalNumber = [];
+        
+
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            // Step 1: Retrieve all the dates from the current page
+            const successCount = await this.totalNumber.count();
+            
+             
+        for (let i = 0; i < successCount; i++) {
+            const numberText = await this.totalNumber.nth(i).innerText();
+            // Parse the number text to integer or float depending on your data
+            const numberValue = parseFloat(numberText.replace(',', '.').trim());
+            totalNumber.push(numberValue);
+        }
+            // Step 2: Check if there is a next page
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+                await this.page.waitForTimeout(2000);
+
+            }
+        }
+      
+    
+        // Step 3: Check if the success numbers are sorted correctly
+        let isSorted = true;
+        const sortedNumbers = [...totalNumber].sort((a, b) => a - b); // Ascending sort
+    
+        if (sortOrder === 'ascending') {
+            for (let i = 0; i < totalNumber.length; i++) {
+                if (totalNumber[i] !== sortedNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        } else if (sortOrder === 'descending') {
+            const sortedDescendingNumbers = sortedNumbers.reverse();
+            for (let i = 0; i < totalNumber.length; i++) {
+                if (totalNumber[i] !== sortedDescendingNumbers[i]) {
+                    isSorted = false;
+                    break;
+                }
+            }
+        }
+    
+        // Step 4: Log and validate the sorting result
+        console.log(`Success Numbers: ${totalNumber.join(', ')}`);
+        console.log(`Expected Sort Order: ${sortOrder}`);
+    
+        expect(isSorted, `Success numbers are not sorted in ${sortOrder} order`).toBeTruthy();
+    }
+
+    async clickOnPage(targetPageNumber: number) {
+         // Adjust the selector as needed
+        
+        const pageNumberLocator = `text=${targetPageNumber}`;
+
+        // Check if the hover button exists (indicating more than 10 pages)
+        const isHoverButtonVisible = await this.paginationMenu.isVisible();
+    
+        if (isHoverButtonVisible) {
+            // Hover over the hover button to reveal the scrollable list of pages
+            await this.paginationMenu.hover();
+    
+            // Scroll to the target page number and click it
+            let isPageVisible = await this.paginationNumbers.locator(pageNumberLocator).isVisible();
+            while (!isPageVisible) {
+                // Scroll down within the pagination container to bring more pages into view
+                await this.page.locator("div.n-scrollbar").last().evaluate(el => {
+                    el.scrollBy(0, 50); // Adjust the scroll amount as needed to show more pages
+                });
+    
+                // Check if the target page is now visible
+                isPageVisible = await this.page.locator("div.n-base-select-option").locator(pageNumberLocator).isVisible();
+            }
+    
+            // Click on the target page number once it is visible
+            await this.page.locator("div.n-base-select-option").locator(pageNumberLocator).click();
+        } else {
+            // Directly click on the target page number if the hover button is not present
+            await this.paginationNumbers.locator(pageNumberLocator).click();
+        }
+    }
 
 }
 

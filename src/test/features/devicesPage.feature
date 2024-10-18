@@ -1,3 +1,4 @@
+
 Feature: As a user, I should be able to display Devices Page; add, edit, sort and filter all devices.
 
 Background:
@@ -36,7 +37,7 @@ Scenario: User should be able to renew the thingsboard token of a gateway device
     Then Verify that the new access token is diplayed when user click on Thingsboard access token option
 
 Scenario: User should be able to search a device with mac id
-    Given User enter a mac id as "AF:AF:AF:12:34:56" into search input box
+    Given User enter a valid value as "AF:AF:AF:12:34:56" into search input box
     Then Verify that the searched device is displayed on Devices Page
 
 Scenario: User should not be able to search a device with invalid value
@@ -131,7 +132,7 @@ Scenario: User should be able to navigate first page when change Facility filter
 
 Scenario: User should be able to navigate first page when change Device type filter
     Given User click on last page button on pagination section
-    When User select "Gateway" option from Device type dropdown
+    When User select "Gateway" option from device type dropdown
     Then Verify that first page is displayed on Devices Page
 
 Scenario: User should not be able to delete an existing device when click on X button

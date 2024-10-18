@@ -19,19 +19,21 @@ export class BrandsPage extends BasePage {
     confirmButton: Locator;
     rejectButton: Locator;
     warningToast: Locator;
+    editBrandName: Locator;
 
 
     constructor(page: Page) {
         super(page);
 
         this.brandHeader = page.locator(".brands-text");
-        this.brandNameInputbox = page.locator("input.n-input__input-el");
-        this.brandsName = page.locator("div.brandName");
+        this.brandNameInputbox = page.getByPlaceholder("Lütfen marka adı giriniz");
+        this.editBrandName = page.getByPlaceholder("Lütfen tesis adı giriniz");
+        this.brandsName = page.locator("div[class='brandName']");
         this.errorToast = page.locator("div.n-message__content:text-is('Marka halihazırda var')");
         this.statusSwitcher = page.locator("div.n-switch__checked");
         this.penIcons = page.locator(".brand-item button");
         this.xSignButton = page.locator("button.n-base-close");
-        this.addBrand = page.locator("button span.n-button__content");
+        this.addBrand = page.getByRole("button", {name: " Marka Ekle "});
         this.addButtonOnPopup = page.locator("button span.n-button__content:text-is('Ekle')");
         this.updateButton = page.getByRole("button", {name: "Güncelle"});
         this.deleteButton = page.getByRole("button", {name: " Sil"});
@@ -42,17 +44,14 @@ export class BrandsPage extends BasePage {
 
     }
 
-    async brandNameWithoutStatus(brandName: string) {
+    async checkBrandName(brandName: string) {
         const brandCount = await this.brandsName.count();
         
         for (let i = 0; i < brandCount; i++) {
             
-            const brandWithStatus = await this.brandsName.nth(i).textContent();
-            const arr = brandWithStatus.split(" ");
-            arr.pop();
-            const actualBrandName = this.arrayToString(arr);
+            const brandText = (await this.brandsName.nth(i).evaluate(el => el.firstChild.textContent)).trim();
             
-            if (actualBrandName.trim() == brandName) {
+            if (brandText == brandName) {
                 
                 return {element : this.brandsName.nth(i), index: i}
             }
@@ -61,7 +60,7 @@ export class BrandsPage extends BasePage {
     }
 
     async checkBrand(brandName: string) {
-        const result = await this.brandNameWithoutStatus(brandName);
+        const result = await this.checkBrandName(brandName);
         const brandElement = result.element;
         
         if(brandElement){
@@ -72,8 +71,9 @@ export class BrandsPage extends BasePage {
     }
 
     async clickBrandPenIcon(brandName: string) {
-        const result = await this.brandNameWithoutStatus(brandName);
+        const result = await this.checkBrandName(brandName);
         const brandElement = result.element;
+        
         
         if(brandElement){
            await this.penIcons.nth(result.index).click();
@@ -83,7 +83,7 @@ export class BrandsPage extends BasePage {
 
     async checkStatusWithBrandName(brandName: string) {
 
-        const result = await this.brandNameWithoutStatus(brandName);
+        const result = await this.checkBrandName(brandName);
         const brandElement = result.element;
         if(brandElement){
             return await brandElement.locator("span").textContent();

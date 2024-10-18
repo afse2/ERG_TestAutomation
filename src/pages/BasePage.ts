@@ -4,6 +4,7 @@ import { expect } from 'playwright/test';
 export class BasePage {
   protected page: Page;
 
+
   constructor(page: Page) {
     this.page = page;
   }
@@ -57,33 +58,35 @@ export class BasePage {
     await this.page.waitForTimeout(timeout);
   }
 
-  async goBack(){
+  async goBack() {
     await this.page.goBack();
   }
-  
-  async checkButtonWithName(buttonName:string) {      
-    return await this.page.getByRole("button", {name: buttonName}).isVisible();
+
+  async checkButtonWithName(buttonName: string) {
+    return await this.page.getByRole("button", { name: buttonName }).isVisible();
   }
 
   async clickWithCordinate(x: number, y: number) {
-    await this.page.mouse.click(x,y);    
+    await this.page.mouse.click(x, y);
   }
 
   async clickWithButtonName(navbarItems, buttonName: string) {
     const optionsCount = await navbarItems.count();
-    for(let i = 0; i<optionsCount; i++){
-        
-        if(await navbarItems.nth(i).textContent() == buttonName){
-            return await navbarItems.nth(i).click();
-        }
+    for (let i = 0; i < optionsCount; i++) {
+
+      if (await navbarItems.nth(i).textContent() == buttonName) {
+        return await navbarItems.nth(i).click();
+      }
     }
   }
-  
-  arrayToString(arr : Array<any>) {
+
+  arrayToString(arr: Array<any>) {
     let result = '';
     for (let i = 0; i < arr.length; i++) {
-        result += arr[i] + " ";
+      result += arr[i] + " ";
     }
     return result;
+  }
 }
-}
+
+module.exports = { BasePage };

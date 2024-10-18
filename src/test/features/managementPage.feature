@@ -1,4 +1,4 @@
-@YR-2244 
+@YR-2244 @ManagementPage
 Feature: As a user, I should be able to display Management Page; so that I can reach all management items
 
   Background:

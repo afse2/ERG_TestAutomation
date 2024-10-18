@@ -2,10 +2,12 @@ import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "playwright/test";
 import { CustomWorld } from "../../support/custom-world";
 import { isAwaitKeyword } from "typescript";
+import { ReportPage } from "../../pages/ReportPage";
 
 
 When('User click Raporlar tab on navbar', async function (this:CustomWorld) {
-    await this.reportPage.reportTab.nth(0).click();
+    this.reportPage = new ReportPage(this.page);
+    await this.reportPage.reportTab.click();
 });
 
 Given('User select this month option from date dropdown', async function (this:CustomWorld) {
@@ -71,6 +73,7 @@ Then('Verify that the facility filter is displayed with all selected on Facility
 
 Given('User select a compliance rate option on compliance rate filter as {string}', async function (this:CustomWorld, complianceRate) {
     this.complianceRate = complianceRate;
+    await this.reportPage.complianceRateDropdown.click();
     await this.reportPage.selectComplianceRate(this.complianceRate);
 });
 
@@ -79,10 +82,11 @@ Then('Verify that the selected compliance rate is displayed on compliance rate f
 });
 
 Given('User select {string} option on date filter', async function (this:CustomWorld, date: string) {
+    await this.reportPage.dateDropdown.click();
     this.dateOptionNumber = await this.reportPage.selectDate(date);
 });
 
-Then('Verify that the this week is diplayed on date filter', async function (this:CustomWorld) {
+Then('Verify that the selected date is diplayed on date filter', async function (this:CustomWorld) {
     await this.reportPage.chechDataDateMatchSelectedFilter(this.dateOptionNumber);
 });
 
@@ -91,7 +95,7 @@ Given('User click on date column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by date in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkDateSorting("ascending");
 });
 
 Given('User dbclick on date column header', async function (this:CustomWorld) {
@@ -99,7 +103,7 @@ Given('User dbclick on date column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by date in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkDateSorting("descending");
 });
 
 Given('User click on compliance rate column header', async function (this:CustomWorld) {
@@ -107,7 +111,7 @@ Given('User click on compliance rate column header', async function (this:Custom
 });
 
 Then('Verify that the reports are sorted by compliance rate in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkComplianceRateSorting("ascending");
 });
 
 Given('User dbclick on compliance rate column header', async function (this:CustomWorld) {
@@ -115,7 +119,7 @@ Given('User dbclick on compliance rate column header', async function (this:Cust
 });
 
 Then('Verify that the reports are sorted by compliance rate in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkComplianceRateSorting("descending");
 });
 
 Given('User click on facilities name column header', async function (this:CustomWorld) {
@@ -123,7 +127,7 @@ Given('User click on facilities name column header', async function (this:Custom
 });
 
 Then('Verify that the reports are sorted by facilities name in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkFacilityNameSorting("ascending");
 });
 
 Given('User dbclick on facilities name column header', async function (this:CustomWorld) {
@@ -131,7 +135,7 @@ Given('User dbclick on facilities name column header', async function (this:Cust
 });
 
 Then('Verify that the reports are sorted by facilities name in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkFacilityNameSorting("descending");
 });
 
 Given('User click on success column header', async function (this:CustomWorld) {
@@ -139,7 +143,7 @@ Given('User click on success column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by success in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkSuccessSorting("ascending");
 });
 
 Given('User dbclick on success column header', async function (this:CustomWorld) {
@@ -147,7 +151,7 @@ Given('User dbclick on success column header', async function (this:CustomWorld)
 });
 
 Then('Verify that the reports are sorted by success in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkSuccessSorting("descending");
 });
 
 Given('User click on fail column header', async function (this:CustomWorld) {
@@ -155,7 +159,7 @@ Given('User click on fail column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by fail in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkFailSorting("ascending");
 });
 
 Given('User dbclick on fail column header', async function (this:CustomWorld) {
@@ -163,7 +167,7 @@ Given('User dbclick on fail column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by fail in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkFailSorting("descending");
 });
 
 Given('User click on unexpected success column header', async function (this:CustomWorld) {
@@ -171,7 +175,7 @@ Given('User click on unexpected success column header', async function (this:Cus
 });
 
 Then('Verify that the reports are sorted by unexpected success in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkUnexpectedSuccessSorting("ascending");
 });
 
 Given('User dbclick on unexpected success column header', async function (this:CustomWorld) {
@@ -179,7 +183,7 @@ Given('User dbclick on unexpected success column header', async function (this:C
 });
 
 Then('Verify that the reports are sorted by unexpected success in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkUnexpectedSuccessSorting("descending");
 });
 
 Given('User click on unexpected fail column header', async function (this:CustomWorld) {
@@ -187,7 +191,7 @@ Given('User click on unexpected fail column header', async function (this:Custom
 });
 
 Then('Verify that the reports are sorted by unexpected fail in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkUnexpectedFailSorting("ascending");
 });
 
 Given('User dbclick on unexpected fail column header', async function (this:CustomWorld) {
@@ -195,7 +199,7 @@ Given('User dbclick on unexpected fail column header', async function (this:Cust
 });
 
 Then('Verify that the reports are sorted by unexpected fail in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkUnexpectedFailSorting("descending");
 });
 
 Given('User click on total column header', async function (this:CustomWorld) {
@@ -203,7 +207,7 @@ Given('User click on total column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by total in ascending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkTotalSorting("ascending");
 });
 
 Given('User dbclick on total column header', async function (this:CustomWorld) {
@@ -211,11 +215,12 @@ Given('User dbclick on total column header', async function (this:CustomWorld) {
 });
 
 Then('Verify that the reports are sorted by total in descending order', async function (this:CustomWorld) {
-    
+    await this.reportPage.checkTotalSorting("descending");
 });
 
-When('User click on {int} button on pagination section', async function (this:CustomWorld, int) {
-    
+When('User click on {int} button on pagination section', async function (this:CustomWorld, pageNumber:number) {
+    await this.reportPage.waitForTimeout(2000);
+    await this.reportPage.clickOnPage(pageNumber);
     
 });
 
