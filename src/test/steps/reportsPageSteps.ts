@@ -3,6 +3,7 @@ import { expect } from "playwright/test";
 import { CustomWorld } from "../../support/custom-world";
 import { isAwaitKeyword } from "typescript";
 import { ReportPage } from "../../pages/ReportPage";
+import { FilterUtility } from "../../support/utilities/FilterUtility";
 
 
 When('User click Raporlar tab on navbar', async function (this:CustomWorld) {
@@ -60,7 +61,7 @@ Given('User select a facility option on facility filter as {string}', async func
 });
 
 Then('Verify that the selected facility is displayed on facility filter tab', async function (this:CustomWorld) {
-    await this.reportPage.checkSelectedFacilityFilter();
+    await FilterUtility.checkSelectedFacilityFilter(this.page, this.reportPage.selectedFacility, this.reportPage.facilitiesName);
 });
 
 When('User click on X button on facility filter', async function (this:CustomWorld) {

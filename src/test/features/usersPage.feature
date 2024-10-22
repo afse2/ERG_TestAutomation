@@ -4,7 +4,7 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
     Given User should be able to login
     When User click on Kullanicilar tab on navbar
 
-  @smoke
+  
   Scenario: User should be able to create a user with valid mail on Users Page
     Given User click on add users button
     When User enter mail into mail inputbox as "test@test.com"
@@ -14,24 +14,27 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
     And User click on add button on Create Users pop-up
     Then Verify that the created user is displayed on Users Page
 
-  Scenario: User should not be able to create a user with invalid mail on Users Page
-    Given User click on add users button
-    When User enter mail into mail inputbox as "test@test"
-    And User select "Tesis Yöneticisi" option from role dropdown
-    And User select "Test" option from facility dropdown
-    And User select "Aktif" option from status dropdown on Create User pop-up
-    And User click on add button on Create Licence pop-up
-    Then Verify that the error toast "body must match pattern \"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$\"" is displayed on Users Page
-
+ 
   Scenario: User should not be able to create a user without facility on Users Page
     Given User click on add users button
-    When User enter mail into mail inputbox as "test@test.com"
+    When User enter mail into mail inputbox as "test@test1.com"
     And User select "Tesis Yöneticisi" option from role dropdown
-    And User select "Test" option from facility dropdown
+    And User select "" option from facility dropdown
     And User select "Aktif" option from status dropdown on Create User pop-up
     And User click on add button on Create Users pop-up
     Then Verify that the error toast "Bu role sahip bir kullanıcının en az bir marka ya da tesisi olmalıdır" is displayed on Users Page
 
+  
+  Scenario: User should not be able to create a user with invalid mail on Users Page
+    Given User click on add users button
+    When User enter mail into mail inputbox as "test@t"
+    And User select "Tesis Yöneticisi" option from role dropdown
+    And User select "Test" option from facility dropdown
+    And User select "Aktif" option from status dropdown on Create User pop-up
+    And User click on add button on Create Users pop-up
+    Then Verify that the error toast "body must match pattern \"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$\"" is displayed on Users Page
+
+  
   Scenario: User should not be able to create a user with existing mail on Users Page
     Given User click on add users button
     When User enter mail into mail inputbox as "test@test.com"
@@ -41,6 +44,7 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
     And User click on add button on Create Users pop-up
     Then Verify that the error toast "Kullanıcı zaten var" is displayed on Users Page
 
+  
   Scenario: User should not be able to create a user when click on X button
     Given User click on add users button
     When User enter mail into mail inputbox as "test1@test.com"
@@ -50,20 +54,24 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
     And User click on X button on Create Users pop-up
     Then Verify that the user with "test1@test.com" mail is not displayed on Users Page
 
+  
   Scenario: User should be able to display edit option when click on three dots sign near the users
     Given User click on three dots sign near the selected user "test@test.com"
     Then Verify that the edit options "Düzenle", "Parola sıfırla", "Sil" are displayed on Users Page
+
 
   Scenario: User should be able to search a user with valid value
     Given User enter a value as "erg" into search input box
     Then Verify that the searched users are displayed on Users Page
 
+
   Scenario: User should not be able to search a user with invalid value
     Given User enter a value as "asd" into search input box
     Then Verify that the No Data message is displayed on Users Page
 
+  
   Scenario: User should be able to filter users by brands name
-    Given User select "ofis test" option from brands dropdown
+    Given User select "Ofis Test" option from brands dropdown
     Then Verify that the selected brand's users are displayed on Users Page
 
   Scenario: User should be able to reset brands filter when click on x button

@@ -2,6 +2,7 @@ import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "playwright/test";
 import { CustomWorld } from "../../support/custom-world";
 import { UsersPage } from "../../pages/UsersPage";
+import { FilterUtility } from "../../support/utilities/FilterUtility";
 
 When('User click on Kullanicilar tab on navbar', async function (this: CustomWorld) {
   this.usersPage = new UsersPage(this.page);
@@ -26,6 +27,7 @@ When('User select {string} option from role dropdown', async function (this: Cus
 When('User select {string} option from facility dropdown', async function (this: CustomWorld, facilityName: string) {
   await this.usersPage.tagDropdown.click();
   await this.usersPage.selectFacility(this.roleName,facilityName);
+  await this.usersPage.tagDropdown.click();
 });
 
 When('User select {string} option from status dropdown on Create User pop-up', async function (this: CustomWorld,statusName: string)  {
@@ -38,47 +40,50 @@ When('User click on add button on Create Users pop-up', async function (this: Cu
 })
 
 Then('Verify that the created user is displayed on Users Page', async function (this: CustomWorld) {
-  await this.usersPage.checkUser(this.userMail);
+  expect (await this.usersPage.checkUser(this.userMail)).toBeTruthy();
 })
 
-Then('Verify that the error toast {string} is displayed on Users Page', async function (this: CustomWorld, s: string) {
-
+Then('Verify that the error toast {string} is displayed on Users Page', async function (this: CustomWorld, errorToast: string) {
+  expect (await this.usersPage.toast.innerText()).toEqual(errorToast);
 })
 
 When('User click on X button on Create Users pop-up', async function (this: CustomWorld) {
-
+  await this.usersPage.xButton.click();
 })
 
-Then('Verify that the user with {string} mail is not displayed on Users Page', async function (this: CustomWorld, s: string) {
-
+Then('Verify that the user with {string} mail is not displayed on Users Page', async function (this: CustomWorld, userMail: string) {
+  expect (await this.usersPage.checkUser(userMail)).toBeFalsy();
 })
 
-Given('User click on three dots sign near the selected user {string}', async function (this: CustomWorld, s: string) {
-
+Given('User click on three dots sign near the selected user {string}', async function (this: CustomWorld, userMail: string) {
+  await this.usersPage.clickEditIcon(userMail);
 })
 
-Then('Verify that the edit options {string}, {string}, {string} are displayed on Users Page', async function (this: CustomWorld, s: string, s2: string, s3: string) {
-
+Then('Verify that the edit options {string}, {string}, {string} are displayed on Users Page', async function (this: CustomWorld, option1: string, option2: string, option3: string) {
+  let options:string[] = [option1, option2, option3];
+  
+  await this.usersPage.checkEditOptions(options);
 })
 
-Given('User enter a value as {string} into search input box', async function (this: CustomWorld, s: string) {
-
+Given('User enter a value as {string} into search input box', async function (this: CustomWorld, searchText: string) {
+  this.searchUser = searchText;
+  await this.usersPage.searchbox.fill(searchText);
 })
 
 Then('Verify that the searched users are displayed on Users Page', async function (this: CustomWorld) {
-
+  expect (await this.usersPage.searchUser(this.searchUser)).toBeTruthy();
 })
 
 Then('Verify that the No Data message is displayed on Users Page', async function (this: CustomWorld) {
-
+  expect(this.usersPage.noDataTable).toBeVisible();
 })
 
 Then('Verify that the selected brand\'s users are displayed on Users Page', async function (this: CustomWorld) {
-
+  await FilterUtility.checkSelectedBrandFilter(this.page, this.usersPage.selectedBrand,this.usersPage.brandNames);
 })
 
 Then('Verify that the all brands users are displayed on Users Page', async function (this: CustomWorld) {
-
+  
 })
 
 Then('Verify that the selected facility\'s users are displayed on Users Page', async function (this: CustomWorld) {

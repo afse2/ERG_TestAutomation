@@ -32,7 +32,7 @@ Scenario: User should not be able to search facility name when write invalid wor
     Given User enter a word on facility filter as "asdf"
     Then Verify that the error message " Veri yok " is displayed on facility filter tab
 
-@YR-2271
+@YR-2271 
 Scenario: User should be able to filter reports by facility options
     Given User select a facility option on facility filter as "5898 Maslak 1453 AVM"
     Then Verify that the selected facility is displayed on facility filter tab

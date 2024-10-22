@@ -18,6 +18,7 @@ setDefaultTimeout(60 * 1000 * 2);
 
 Before(async function (this:CustomWorld, { pickle }) {
     const scenarioName = pickle.name + pickle.id;
+
     this.context = await browser.newContext({
         recordVideo: {
             dir: "test-results/videos",

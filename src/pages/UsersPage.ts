@@ -18,6 +18,14 @@ export class UsersPage extends BasePage {
     addButton: Locator;
     mails: Locator;
     nextPageButton: Locator;
+    toast: Locator;
+    xButton: Locator;
+    editOptions: Locator;
+    searchbox: Locator;
+    noDataTable: Locator;
+    selectedBrand: Locator;
+    brandNames: Locator;
+    
     
     
 
@@ -37,6 +45,15 @@ export class UsersPage extends BasePage {
         this.addButton = page.getByRole("button", {name: "Ekle", exact: true });
         this.mails = page.locator("td[data-col-key='email']");
         this.nextPageButton = page.locator("div.n-pagination-item--button").nth(1);
+        this.toast = page.locator("div.n-message__content");
+        this.xButton = page.locator("button.n-base-close");
+        this.editOptions = page.locator("div.n-dropdown-option");
+        this.searchbox = page.locator("input.n-input__input-el");
+        this.noDataTable = page.locator("div.n-data-table-empty");
+        this.selectedBrand = page.locator("div.n-base-selection-overlay__wrapper span").first();
+        this.brandNames = page.locator("td:nth-child(6)");
+        
+
 
     }
 
@@ -99,8 +116,7 @@ export class UsersPage extends BasePage {
             for (let j = 0; j < mailsCount; j++) {
                 const mailText = await this.mails.nth(j).innerText();
                 if(mailText === userMail){
-                    expect(true).toBeTruthy;
-                    return;
+                    return true;
                 }
 
             }
@@ -114,6 +130,52 @@ export class UsersPage extends BasePage {
 
         }
 
+    }
+
+    async clickEditIcon(userMail: string) {
+        await this.page.getByRole('row', { name: userMail }).getByRole('button').click();
+    }
+
+    async checkEditOptions(options:string[]){
+        const optionsCount = await this.editOptions.count();
+        let actualOptions: string[] = [];
+        for (let i = 0; i < optionsCount; i++) {
+            const optionText = await this.editOptions.nth(i).innerText();
+            
+            actualOptions.push(optionText); 
+        }
+        
+        return actualOptions.every((val,index)=> val === options[index]);
+    }
+
+    async searchUser(searchText: string) {
+        let hasNextPage = true;
+
+
+        while (hasNextPage) {
+
+            await this.page.waitForTimeout(500);
+
+            let mailsCount = await this.mails.count();
+
+            for (let j = 0; j < mailsCount; j++) {
+               
+                const mailText = await this.mails.nth(j).innerText();
+                if(!mailText.includes(searchText)){
+                    return false;
+                }
+
+            }
+
+            hasNextPage = await this.nextPageButton.isVisible() && !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            if (hasNextPage) {
+                await this.nextPageButton.click();
+
+            }
+
+        }
+        return true;
     }
 }
 

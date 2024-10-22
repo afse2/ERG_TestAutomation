@@ -30,6 +30,9 @@ export class CustomWorld extends World {
     usersPage: UsersPage;
     roleName: string;
     userMail: string;
+    searchUser: string;
+    searchDevice: string;
+    currentPage: string;
     
     
     constructor(options: IWorldOptions){
@@ -49,6 +52,9 @@ export class CustomWorld extends World {
         this.reportPage = null;
         this.devicePage = null;
         this.usersPage = null;
+        this.searchUser = null;
+        this.searchDevice = null;
+        this.currentPage = null;
     }
 
 }
