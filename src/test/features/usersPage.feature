@@ -76,7 +76,7 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
 
   Scenario: User should be able to reset brands filter when click on x button
     Given User select "ofis test" option from brands dropdown
-    When User click on x button
+    When User click on x button on brands filter
     Then Verify that the all brands users are displayed on Users Page
 
   Scenario: User should be able to filter users by facility name
@@ -85,37 +85,36 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
 
   Scenario: User should be able to reset facility filter when click on x button
     Given User select "test1" option from facilities dropdown
-    When User click on x button
+    When User click on x button on facility filter
     Then Verify that the all facilities users are displayed on Users Page
 
-  Scenario: User should be able to display selected brand's facilities on facilities dropdown
-    Given User select "ofis test" option from brands dropdown
-    Then Verify that the all facilities belonging to the brand are displayed under the facilities drop-down menu
-
+  
   Scenario: User should be able to filter users by status
-    Given User select "Bloke" option from status type dropdown
+    Given User select "Aktif" option from status type dropdown
     Then Verify that the selected status type are displayed on Users Page
 
+  
   Scenario: User should be able to reset status type filter when click on x button
     Given User select "Bloke" option from status type dropdown
-    When User click on x button
+    When User click on x button on status filter
     Then Verify that the all status type are displayed on Users Page
 
+  
   Scenario: User should be able to search brands name when enter valid value on brands filter tab
-    Given User enter a value on brands filter as "Mar"
+    Given User enter a value on brands filter as "Of"
     Then Verify that the brands name contain the value are displayed on brands filter tab
 
   Scenario: User should not be able to search brand name when enter invalid value on brands filter tab
     Given User enter a value on brands filter as "asdf"
-    Then Verify that the error message " Veri yok " is displayed on brands filter tab
+    Then Verify that the error message "Veri yok" is displayed on brands filter tab
 
   Scenario: User should be able to search facility name when enter valid value on facility filter tab
-    Given User enter a value on facility filter as "ka"
+    Given User enter a value on facility filter as "te"
     Then Verify that the facility name contain the value are displayed on facility filter tab
 
   Scenario: User should not be able to search facility name when enter invalid value on facility filter tab
     Given User enter a value on facility filter as "asdf"
-    Then Verify that the error message " Veri yok " is displayed on facility filter tab
+    Then Verify that the error message "Veri yok" is displayed on facility filter tab
 
   Scenario: User should be able to search status type name when enter valid value on status type filter tab
     Given User enter a value on status type filter as "ga"
@@ -126,16 +125,17 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
     Then Verify that the error message " Veri yok " is displayed on status type filter tab
 
   Scenario: User should be able to navigate desired page on Users Page
-    Given User click on "2" pagination section on Users Page
-    Then Verify that the "2" page users are displayed
+    Given User click on "2" pagination section
+    Then Verify that the "2" page is displayed
 
   Scenario: User should be able to navigate next page when click on > button
-    Given User click on > button on Users Page
+    Given User click on > button
     Then Verify that the next page is displayed
 
-  Scenario: User should be able to navigate previous page when click on < button
-    Given User click on "2" pagination section on Users Page
-    When User click on < button on Users Page
+  
+  Scenario: User should be able to navigate previous page when click on button on Users Page
+    Given User click on "2" pagination section
+    When User click on < button
     Then Verify that the previous page is displayed
 
   Scenario: User should not be able to navigate previous page when land on the first page
@@ -149,30 +149,31 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
   Scenario: User should be able to navigate first page when change Brands filter
     Given User click on last page button on pagination section
     When User select "ofis test" option from brands dropdown
-    Then Verify that first page is displayed on Users Page
+    Then Verify that first page is displayed
 
   Scenario: User should be able to navigate first page when change Facility filter
     Given User click on last page button on pagination section
     When User select "Maslak" option from facilities dropdown
-    Then Verify that first page is displayed on Users Page
+    Then Verify that first page is displayed
 
   Scenario: User should be able to navigate first page when change status type filter
     Given User click on last page button on pagination section
     When User select "Aktif" option from status type dropdown
-    Then Verify that first page is displayed on Users Page
+    Then Verify that first page is displayed
 
+  @smoke
   Scenario: User should be able to reset user's password
-    Given User click on three dots sign near the selected user "ergtester1@gmail.com"
+    Given User click on three dots sign near the selected user "test@test.com"
     When User click on reset password button
     And User click on reset button
-    Then Verify that the success message "parola basariyla sifirlandi" and password renewed pop-up are displayed on Users Page
+    Then Verify that the success message "Parola yenilendi" and password renewed pop-up are displayed on Users Page
 
   Scenario: User should be able to edit an existing user
     Given User click on three dots sign near the selected user "test@test.com"
     When User click on edit button
-    And User select a role as "Marka Yoneticisi"
-    And User select a brand as "Macro Center"
-    And User select a status as "Pasif"
+    And User select "Marka Yoneticisi" option from role dropdown
+    And User select "Ofis Test" option from facility dropdown
+    And User select "Aktif" option from status dropdown on Create User pop-up
     And User click on save button
     Then Verify that the created user is displayed on Users Page
 
@@ -186,7 +187,7 @@ Feature: As a user, I should be able to display Users Page, sort and filter all 
   Scenario: User should not be able to edit an existing user when click on X button
     Given User click on three dots sign near the selected user "test@test.com"
     When User click on edit button
-    And User select a brand as "Macro Center"
+    And User select "Ofis Test" option from facility dropdown
     And User click on X button on edit user pop-up
     Then Verify that the edit user's brand is not displayed as "Macro Center"
 

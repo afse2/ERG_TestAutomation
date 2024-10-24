@@ -61,7 +61,7 @@ Given('User select a facility option on facility filter as {string}', async func
 });
 
 Then('Verify that the selected facility is displayed on facility filter tab', async function (this:CustomWorld) {
-    await FilterUtility.checkSelectedFacilityFilter(this.page, this.reportPage.selectedFacility, this.reportPage.facilitiesName);
+    await FilterUtility.checkSelectedFilterOnTable(this.page, this.reportPage.selectedFacility, this.reportPage.facilitiesName);
 });
 
 When('User click on X button on facility filter', async function (this:CustomWorld) {

@@ -6,7 +6,9 @@ declare global {
             ENV: "staging" | "prod" | "test",
             BASEURL: string,
             HEAD: "true" | "false",
-            TAGS: "@smoke" | "@regression"
+            TAGS: "@smoke" | "@regression",
+            APIURL: string,
+            LOGINPAYLOAD: string
         }
     }
 }

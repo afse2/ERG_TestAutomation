@@ -21,7 +21,7 @@ Scenario: User should not be able to create a new device with same name as the e
     And User click on Add button
     Then Verify that the error toast "Cihaz halihazırda var" is diplayed on Devices Page
 
-@YR-2368
+@YR-2368 
 Scenario: User should be able to edit a existing device
     Given User click on three dots sign near the selected gateway device "AF:AF:AF:12:34:56"
     When User click on edit option from dropdown
@@ -92,17 +92,17 @@ Scenario: User should be able to search brands name when enter valid value on br
 @YR-2394
 Scenario: User should not be able to search brand name when enter invalid value on brands filter tab
     Given User enter a value on brands filter as "asdf"
-    Then Verify that the error message " Veri yok " is displayed on brands filter tab
+    Then Verify that the error message "Veri yok" is displayed on brands filter tab
 
 @YR-2396
 Scenario: User should be able to search facility name when enter valid value on facility filter tab
-    Given User enter a value on facility filter as "ka"
+    Given User enter a value on facility filter as "te"
     Then Verify that the facility name contain the value are displayed on facility filter tab
 
 @YR-2398
 Scenario: User should not be able to search facility name when enter invalid value on facility filter tab
     Given User enter a value on facility filter as "asdf"
-    Then Verify that the error message " Veri yok " is displayed on facility filter tab
+    Then Verify that the error message "Veri yok" is displayed on facility filter tab
 
 @YR-2400
 Scenario: User should be able to search device type name when enter valid value on device type filter tab
@@ -116,23 +116,23 @@ Scenario: User should not be able to search device type name when enter invalid 
 
 @YR-2404
 Scenario: User should be able to navigate desired page on Devices Page
-    Given User click on "2" pagination section on Devices Page
-    Then Verify that the "2" page devices are displayed
+    Given User click on "2" pagination section
+    Then Verify that the "2" page is displayed
 
 @YR-2406
 Scenario: User should be able to navigate next page when click on next page button
-    Given User click on > button on Devices Page
+    Given User click on > button
     Then Verify that the next page is displayed 
 
 @YR-2408
 Scenario: User should be able to navigate previous page
-    Given User click on "2" pagination section on Devices Page
-    When User click on < button on Devices Page
-    Then Verify that the previous page is diplayed
+    Given User click on "2" pagination section
+    When User click on < button
+    Then Verify that the previous page is displayed
 
 @YR-2410
 Scenario: User should not be able to navigate previous page when land on the first page
-    Given User click on "1" pagination section on Devices Page
+    Given User click on "1" pagination section
     Then Verify that the < button is not enable
 
 @YR-2412
@@ -144,26 +144,26 @@ Scenario: User should not be able to navigate next page when land on the last pa
 Scenario: User should be able to navigate first page change Brands filter
     Given User click on last page button on pagination section
     When User select "Ofis Test" option from brands dropdown
-    Then Verify that first page is displayed on Devices Page
+    Then Verify that first page is displayed
 
 @YR-2416
 Scenario: User should be able to navigate first page change Facility filter
     Given User click on last page button on pagination section
     When User select "Test" option from facilities dropdown
-    Then Verify that first page is displayed on Devices Page
+    Then Verify that first page is displayed
 
 @YR-2418
 Scenario: User should be able to navigate first page when change Device type filter
     Given User click on last page button on pagination section
     When User select "Gateway" option from device type dropdown
-    Then Verify that first page is displayed on Devices Page
+    Then Verify that first page is displayed
 
 @YR-2420
 Scenario: User should not be able to delete an existing device when click on X button
     Given User click on three dots sign near the selected device "AF:AF:AF:12:34:56"
     When User click on delete button
     And User click on X button on delete device pop-up
-    Then Verify that the device with mac id "AF:AF:AF:12:34:56" and device type "Sabun" is displayed on Devices Page
+    Then Verify that the device with mac id "AF:AF:AF:12:34:56" and device type "Gateway" is displayed on Devices Page
 
 @YR-2422
 Scenario: User should be able to delete an existing device

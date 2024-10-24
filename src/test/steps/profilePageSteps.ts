@@ -1,10 +1,11 @@
 import { Given, When, Then, setDefaultTimeout } from "@cucumber/cucumber";
-import { expect } from "playwright/test";
+import { expect, request } from "playwright/test";
 import { CustomWorld } from "../../support/custom-world";
 import { ProfilePage } from "../../pages/ProfilePage";
 import { LoginPage } from "../../pages/LoginPage";
 import { ManagementPage } from "../../pages/ManagementPage";
 import { BrandsPage } from "../../pages/BrandPage";
+import { APIUtility } from "../../support/utilities/APIUtility";
 
 
 
@@ -17,6 +18,9 @@ Given('User should be able to login', async function (this:CustomWorld) {
     await this.loginPage.navigateTo(process.env.BASEURL);
     await this.loginPage.login(process.env.USERNAME, process.env.PASSWORD);
     await this.loginPage.waitForNavigation();
+    // this.apiContext = await request.newContext();
+    // const token = await APIUtility.getToken(this.apiContext,JSON.parse(process.env.LOGINPAYLOAD));
+    
 });
 
 Given('User click on profile menu tab', async function (this:CustomWorld) {

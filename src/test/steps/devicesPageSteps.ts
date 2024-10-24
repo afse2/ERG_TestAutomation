@@ -27,7 +27,7 @@ When('User click on Add button', async function (this: CustomWorld) {
 });
 
 Then('Verify that the device with mac id {string} and device type {string} is displayed on Devices Page', async function (this: CustomWorld, macID: string, deviceType: string) {
-    await this.devicePage.deviceSuccessToast.waitFor();
+    await this.devicePage.waitForTimeout(500);
     expect(await this.devicePage.checkDevice(macID, deviceType)).toBeTruthy();
 });
 
@@ -88,11 +88,11 @@ Then('Verify that the No Data message is displayed on Devices Page', async funct
 Given('User select {string} option from brands dropdown', async function (this: CustomWorld, brandName: string)  {
     await this.devicePage.brandDropdown.click();
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.selectOptionFromFilter(this.devicePage.dropdownOptions, brandName);
+    await FilterUtility.selectOptionFromFilter(this.page, brandName);
 });
 
 Then('Verify that the selected brand\'s devices are displayed on Devices Page', async function (this: CustomWorld)  {
-    await FilterUtility.checkSelectedBrandFilter(this.page, this.devicePage.selectedBrand ,this.devicePage.brandsName);
+    await FilterUtility.checkSelectedFilterOnTable(this.page, this.devicePage.selectedBrand ,this.devicePage.brandsName);
 });
 
 
@@ -109,13 +109,13 @@ Then('Verify that the all facilities devices are displayed on Devices Page', asy
 });
 
 Then('Verify that the selected facility\'s devices are displayed on Devices Page', async function (this: CustomWorld)  {
-    await FilterUtility.checkSelectedFacilityFilter(this.page, this.devicePage.selectedFacility,this.devicePage.facilitiesName);
+    await FilterUtility.checkSelectedFilterOnTable(this.page, this.devicePage.selectedFacility,this.devicePage.facilitiesName);
 });
 
 Given('User select {string} option from facilities dropdown', async function (this: CustomWorld, facilityName: string)  {
     await this.devicePage.facilityDropdown.click();
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.selectOptionFromFilter(this.devicePage.dropdownOptions,facilityName);
+    await FilterUtility.selectOptionFromFilter(this.page,facilityName);
 });
 
 When('User click on x button on facility filter', async function (this: CustomWorld)  {
@@ -130,11 +130,11 @@ Given('User enter a value on brands filter as {string}', async function (this: C
 Given('User select {string} option from device type dropdown', async function (this: CustomWorld, deviceType: string) {
     await this.devicePage.deviceTypeFilterDropdown.click();
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.selectOptionFromFilter(this.devicePage.dropdownOptions, deviceType);
+    await FilterUtility.selectOptionFromFilter(this.page, deviceType);
 });
 
 Then('Verify that the selected devices type are diplayed on Devices Page', async function (this: CustomWorld) {
-    await FilterUtility.checkSelectedDeviceTypeFilter(this.page, this.devicePage.selectedDeviceType, this.devicePage.deviceTypes);
+    await FilterUtility.checkSelectedFilterOnTable(this.page, this.devicePage.selectedDeviceType, this.devicePage.deviceTypes);
 });
 
 When('User click on x button on device type dropdown', async function (this: CustomWorld) {
@@ -147,7 +147,7 @@ Then('Verify that the all devices type are displayed on Devices Page', async fun
 
 Then('Verify that the brands name contain the value are displayed on brands filter tab', async function (this: CustomWorld) {
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.searchFilter(this.devicePage.dropdownOptions, this.searchDevice);
+    await FilterUtility.searchFilter(this.page, this.searchDevice);
 })
 
 Then('Verify that the error message {string} is displayed on brands filter tab', async function (this: CustomWorld, errorMessage: string) {
@@ -160,7 +160,7 @@ Given('User enter a value on facility filter as {string}', async function (this:
 
 Then('Verify that the facility name contain the value are displayed on facility filter tab', async function (this: CustomWorld) {
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.searchFilter(this.devicePage.dropdownOptions, this.searchDevice);
+    await FilterUtility.searchFilter(this.page, this.searchDevice);
 })
 
 Given('User enter a value on device type filter as {string}', async function (this: CustomWorld, searchText: string) {
@@ -170,23 +170,23 @@ Given('User enter a value on device type filter as {string}', async function (th
 
 Then('Verify that the device type name contain the value are displayed on device type filter tab', async function (this: CustomWorld) {
     await this.devicePage.dropdownOptions.first().waitFor();
-    await FilterUtility.searchFilter(this.devicePage.dropdownOptions, this.searchDevice);
+    await FilterUtility.searchFilter(this.page, this.searchDevice);
 })
 
 Then('Verify that the error message {string} is displayed on device type filter tab', async function (this: CustomWorld, errorMessage: string) {
     expect (await this.devicePage.noDataOnFilter.innerText()).toEqual(errorMessage);
 })
 
-Given('User click on {string} pagination section on Devices Page', async function (this: CustomWorld, pageNumber: string) {
+Given('User click on {string} pagination section', async function (this: CustomWorld, pageNumber: string) {
     await this.devicePage.clickPage(pageNumber).click();
     
 })
 
-Then('Verify that the {string} page devices are displayed', async function (this: CustomWorld, pageNumber: string) {
+Then('Verify that the {string} page is displayed', async function (this: CustomWorld, pageNumber: string) {
     expect((await this.devicePage.clickPage(pageNumber).getAttribute("class"))?.includes("active")).toBe(true);
 })
 
-Given('User click on > button on Devices Page', async function (this: CustomWorld) {
+Given('User click on > button', async function (this: CustomWorld) {
     this.currentPage = await this.devicePage.getText("div.n-pagination-item--active");
     await this.devicePage.nextPageButton.click();
 })
@@ -197,12 +197,12 @@ Then('Verify that the next page is displayed', async function (this: CustomWorld
     expect(diff).toBe(1);
 })
 
-When('User click on < button on Devices Page', async function (this: CustomWorld) {
+When('User click on < button', async function (this: CustomWorld) {
     this.currentPage = await this.devicePage.getText("div.n-pagination-item--active");
     await this.devicePage.previousPageButton.click();
 })
 
-Then('Verify that the previous page is diplayed', async function (this: CustomWorld) {
+Then('Verify that the previous page is displayed', async function (this: CustomWorld) {
     let previousPage = await this.devicePage.getText("div.n-pagination-item--active");
     let diff = Number(this.currentPage) - Number(previousPage);
     expect(diff).toBe(1);
@@ -216,7 +216,7 @@ Then('Verify that the > button is not enable', async function (this: CustomWorld
   expect((await this.devicePage.nextPageButton.getAttribute("class")).includes("disabled")).toBeTruthy();
 })
 
-Then('Verify that first page is displayed on Devices Page', async function (this: CustomWorld) {
+Then('Verify that first page is displayed', async function (this: CustomWorld) {
   expect(await this.devicePage.getText("div.n-pagination-item--active")).toBe("1");
 })
 

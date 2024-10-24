@@ -1,6 +1,6 @@
 import { World, IWorldOptions, setWorldConstructor } from "@cucumber/cucumber";
 import { ManagementPage } from "../pages/ManagementPage";
-import { BrowserContext, Page } from "playwright";
+import { APIRequestContext, BrowserContext, Page } from "playwright";
 import { BrandsPage } from "../pages/BrandPage";
 import { ReportPage } from "../pages/ReportPage";
 import { LoginPage } from "../pages/LoginPage";
@@ -8,6 +8,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import { DevicePage } from "../pages/DevicePage";
 import { UsersPage } from "../pages/UsersPage";
 import { BasePage } from "../pages/BasePage";
+import { LicencesPage } from "../pages/LicencesPage";
 
 
 
@@ -17,6 +18,7 @@ import { BasePage } from "../pages/BasePage";
 export class CustomWorld extends World {
     page?: Page;
     context: BrowserContext;
+    apiContext: APIRequestContext;
     recoveryMail:string;
     userName: string;
     loginPage: LoginPage;
@@ -33,6 +35,7 @@ export class CustomWorld extends World {
     searchUser: string;
     searchDevice: string;
     currentPage: string;
+    licencePage: LicencesPage;
     
     
     constructor(options: IWorldOptions){
@@ -55,6 +58,7 @@ export class CustomWorld extends World {
         this.searchUser = null;
         this.searchDevice = null;
         this.currentPage = null;
+        this.licencePage = null;
     }
 
 }

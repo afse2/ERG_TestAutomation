@@ -25,6 +25,27 @@ export class UsersPage extends BasePage {
     noDataTable: Locator;
     selectedBrand: Locator;
     brandNames: Locator;
+    selectedFacility: Locator;
+    facilityNames: Locator;
+    brandDropdown: Locator;
+    facilityDropdown: Locator;
+    statusFilterDropdown: Locator;
+    selectedStatus: Locator;
+    statusItems: Locator;
+    statusFilterClear: Locator;
+    statusFilterInput: Locator;
+    noDataOnFilter:Locator;
+    resetPassword: Locator;
+    resetButton: Locator;
+    passwordRenewedToast: Locator;
+    resetPasswordPopup: Locator;
+    editButton: Locator;
+    saveButton: Locator;
+    tagOptionClear: Locator;
+    closePopup: Locator;
+    deleteUserButton: Locator;
+    
+
     
     
     
@@ -52,6 +73,27 @@ export class UsersPage extends BasePage {
         this.noDataTable = page.locator("div.n-data-table-empty");
         this.selectedBrand = page.locator("div.n-base-selection-overlay__wrapper span").first();
         this.brandNames = page.locator("td:nth-child(6)");
+        this.brandDropdown = page.locator("div.n-base-selection-label").first();
+        this.selectedFacility = page.locator("div.n-base-selection-overlay__wrapper span").nth(1);
+        this.facilityNames = page.locator("td:nth-child(7)");
+        this.facilityDropdown = page.locator("div.n-base-selection-label").nth(1);
+        this.statusFilterDropdown = page.locator("div.n-base-selection-label").nth(2);
+        this.selectedStatus = page.locator("div.n-base-selection-overlay__wrapper span").nth(2);
+        this.statusItems =  page.locator("td:nth-child(5)");
+        this.statusFilterClear = page.locator("div.n-base-clear").nth(2);
+        this.statusFilterInput = page.locator("input.n-base-selection-input").nth(2);
+        this.noDataOnFilter = page.locator("div.n-base-select-menu__empty");
+        this.resetPassword = page.locator("div.n-dropdown-option").nth(1);
+        this.resetButton = page.getByRole("button", {name:"Sıfırla"});
+        this.passwordRenewedToast = page.locator("div.n-message__content:text-is('Parola yenilendi')");
+        this.resetPasswordPopup = page.locator("div.n-dialog");
+        this.editButton = page.locator("div.n-dropdown-option").nth(0);
+        this.saveButton = page.getByRole("button", {name: 'Kaydet'});
+        this.tagOptionClear = page.locator("div.n-base-close");
+        this.closePopup = page.locator("button.n-base-close");
+        this.deleteUserButton = page.getByRole("button", {name: "Kullanıcı Sil"});
+
+        
         
 
 

@@ -36,7 +36,7 @@ export class DevicePage extends BasePage {
     selectedDeviceType: Locator;
     deviceTypeFilterDropdown: Locator;
     deviceTypeFilterClear: Locator;
-    brandFilterInput: Locator;    
+    brandFilterInput: Locator;
     noDataOnFilter: Locator;
     facilityFilterInput: Locator;
     deviceTypeFilterInput: Locator;
@@ -47,11 +47,13 @@ export class DevicePage extends BasePage {
     
 
 
-    constructor(page: Page){
+
+
+    constructor(page: Page) {
         super(page);
 
         this.devicesTab = page.locator("div.item:has-text('Cihazlar')");
-        this.addDevice = page.getByRole('button', {name: 'Cihaz Ekle'});
+        this.addDevice = page.getByRole('button', { name: 'Cihaz Ekle' });
         this.macIdInputbox = page.getByPlaceholder('XX:XX:XX:XX:XX:XX');
         this.deviceTypeDropdown = page.locator(".n-form-item-blank > .n-select");
         this.deviceTypeOptions = page.locator("div.n-base-select-option");
@@ -62,10 +64,10 @@ export class DevicePage extends BasePage {
         this.deviceSuccessToast = page.locator("div.n-message__content:text-is('Cihazlar başarıyla getirildi')");
         this.existDeviceToast = page.locator("div.n-message__content:text-is('Cihaz halihazırda var')");
         this.editButton = page.locator("div.n-dropdown-option").first();
-        this.updateButton = page.getByRole("button", {name: 'Güncelle'});
+        this.updateButton = page.getByRole("button", { name: 'Güncelle' });
         this.editOptions = page.locator("div.n-dropdown-option");
         this.tbAccessToken = page.locator("div.n-dropdown-option").nth(2);
-        this.renewToken = page.getByRole("button", {name: 'Token Yenile'});
+        this.renewToken = page.getByRole("button", { name: 'Token Yenile' });
         this.searchbox = page.locator("input.n-input__input-el");
         this.noDataTable = page.locator("div.n-data-table-empty");
         this.brandsName = page.locator("td:nth-child(4)");
@@ -87,9 +89,10 @@ export class DevicePage extends BasePage {
         this.previousPageButton = page.locator("div.n-pagination-item--button").first();
         this.deleteButton = page.locator("div.n-dropdown-option").nth(1);
         this.XButton = page.locator("button.n-base-close");
-        this.deleteDeviceButton = page.getByRole("button", {name: "Cihazı Sil"});
+        this.deleteDeviceButton = page.getByRole("button", { name: "Cihazı Sil" });
         
-    
+        
+
     }
 
 
@@ -98,16 +101,16 @@ export class DevicePage extends BasePage {
 
         for (let i = 0; i < deviceTypeCount; i++) {
             const deviceTypeName = await this.deviceTypeOptions.nth(i).innerText();
-            if(deviceTypeName === deviceType){
+            if (deviceTypeName === deviceType) {
                 return await this.deviceTypeOptions.nth(i).click();
             }
-            
+
         }
     }
 
     async checkDevice(macID: string, deviceType: string) {
         // Get the selected facility name
-        
+        await this.page.getByText('1', {exact:true}).click();
 
         let hasNextPage = true;
 
@@ -119,44 +122,63 @@ export class DevicePage extends BasePage {
             for (let i = 0; i < reportCount; i++) {
                 const macAddress = await this.macAddress.nth(i).innerText();
                 const actualDeviceType = await this.deviceTypes.nth(i).innerText();
-                
+
                 // Assert that facility names match
-                if(macAddress == macID && actualDeviceType == deviceType){
+                if (macAddress == macID && actualDeviceType == deviceType) {
                     return true;
                 }
-                
+
             }
 
             // Check if there is a next page button and it is not disabled
-            hasNextPage = await this.nextPageButton.isVisible() && 
-                          !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+            hasNextPage = await this.nextPageButton.isVisible() &&
+                !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
 
             // If there is a next page, click it to go to the next page
             if (hasNextPage) {
                 await this.nextPageButton.click();
+                await this.page.waitForTimeout(500);
             }
         }
         return false;
     }
-    
+
     async clickEditIcon(macId: string) {
-        await this.page.getByRole('row', { name: macId }).getByRole('button').click();
+        let hasNextPage = true;
+
+        while (hasNextPage) {
+            await this.page.waitForTimeout(500);
+            const row = await this.page.getByRole('row', { name: macId }).isVisible();
+            
+            if (row) {
+                return await this.page.getByRole('row', { name: macId }).getByRole('button').click();
+            }
+
+            hasNextPage = await this.nextPageButton.isVisible() &&
+                !((await this.nextPageButton.getAttribute("class")).includes("disabled"));
+
+            // If there is a next page, click it to go to the next page
+            if (hasNextPage) {                
+                await this.nextPageButton.click();
+            }
+        }
+
     }
 
-    async checkEditOptions(options:string[]){
+    async checkEditOptions(options: string[]) {
         const optionsCount = await this.editOptions.count();
         let actualOptions: string[] = [];
         for (let i = 0; i < optionsCount; i++) {
             const optionText = await this.editOptions.nth(i).innerText();
-            
-            actualOptions.push(optionText); 
+
+            actualOptions.push(optionText);
         }
-        
-        return actualOptions.every((val,index)=> val === options[index]);
+
+        return actualOptions.every((val, index) => val === options[index]);
     }
 
     clickPage(pageNumber: string) {
-       return this.page.getByText(pageNumber, {exact:true} );        
+        return this.page.getByText(pageNumber, { exact: true });
     }
 }
 
